@@ -1,63 +1,108 @@
+import { loadEnv } from "../utils/env.js";
 import { scrapeRemaxRD } from "../scrapers/remaxrd.js";
 import { scrapeC21Sunsets } from "../scrapers/c21sunsets.js";
-import { SourceConfig, Filters } from "../models/types.js";
+import { applyFilters } from "../filters/applyFilters.js";
+import { loadExcelConfig } from "../config/excel.js";
 import fs from "fs";
 import path from "path";
 import { renderHtml, renderHtmlFromJson } from "../notifications/email/index.js";
 
-// Configuración de prueba
-const testConfig: SourceConfig = {
-  id: "test",
-  siteKey: "remaxrd",
-  url: "https://remaxrd.com/propiedades?businessTypes=sale&currencyType=us&locations[]=id-440%26description-BAYAHIBE%26&typeProperty[]=apartment&ciudad=BAYAHIBE",
-  active: true,
-  maxPages: 2,
-};
-
-const testFilters: Filters = {
-  maxPriceUSD: 500000,
-  city: "Bayahibe",
-};
+// Cargar variables de entorno (.env y .env.local)
+loadEnv();
 
 async function testScrapers() {
+  const startTime = Date.now();
   console.log("🧪 Iniciando pruebas de scrapers...\n");
-
-  // Probar RE/MAX RD
-  console.log("📊 Probando RE/MAX RD...");
+  
+  // Cargar configuración desde Excel (igual que run-site.ts)
+  console.log("📥 Cargando configuración desde Excel...");
+  let config;
   try {
-    const remaxListings = await scrapeRemaxRD(testConfig, testFilters);
-    console.log(`✅ RE/MAX RD: ${remaxListings.length} propiedades encontradas`);
-    if (remaxListings.length > 0) {
-      console.log(`   Ejemplo: ${remaxListings[0].title} - $${remaxListings[0].priceUSD}`);
-    }
-  } catch (err) {
-    console.error("❌ Error en RE/MAX RD:", err);
+    config = await loadExcelConfig();
+    console.log("✅ Configuración cargada exitosamente\n");
+  } catch (error: any) {
+    console.error("❌ Error al cargar configuración del Excel:", error.message);
+    console.error("\n💡 Asegúrate de tener configurado:");
+    console.error("   - Variable GOOGLE_SHEET_URL (recomendado), O");
+    console.error("   - GOOGLE_DRIVE_FILE_ID + credenciales de Google Drive");
+    process.exit(1);
   }
-
-  // Probar C21 Sunsets
-  console.log("\n📊 Probando C21 Sunsets...");
-  const c21Config: SourceConfig = {
-    ...testConfig,
-    siteKey: "c21sunsets",
-    url: "https://c21sunsets.com/es/s/bayahibe-la-altagracia",
-  };
-  try {
-    const c21Listings = await scrapeC21Sunsets(c21Config, testFilters);
-    console.log(`✅ C21 Sunsets: ${c21Listings.length} propiedades encontradas`);
-    if (c21Listings.length > 0) {
-      console.log(`   Ejemplo: ${c21Listings[0].title} - $${c21Listings[0].priceUSD || "Consultar"}`);
-    }
-  } catch (err) {
-    console.error("❌ Error en C21 Sunsets:", err);
+  
+  // Usar solo las fuentes activas del Excel
+  const activeSources = config.sources.filter(s => s.active);
+  if (activeSources.length === 0) {
+    console.error("❌ No hay fuentes activas en el Excel");
+    process.exit(1);
   }
+  
+  // Mostrar configuración inicial desde Excel
+  console.log("📋 Configuración utilizada (desde Excel):");
+  console.log("   Fuentes activas:");
+  activeSources.forEach(source => {
+    console.log(`     - ${source.siteKey}: ${source.url}`);
+    console.log(`       Max páginas: ${source.maxPages || 5}`);
+  });
+  console.log("   Filtros aplicados:");
+  console.log(`     - Precio máximo: ${config.filters.maxPriceUSD ? '$' + config.filters.maxPriceUSD.toLocaleString() + ' USD' : 'N/A'}`);
+  console.log(`     - Precio mínimo: ${config.filters.minPriceUSD ? '$' + config.filters.minPriceUSD.toLocaleString() + ' USD' : 'N/A'}`);
+  console.log(`     - Ciudad: ${config.filters.city || 'N/A'}`);
+  console.log(`     - Dormitorios mínimos: ${config.filters.minBeds || 'N/A'}`);
+  console.log(`     - Baños mínimos: ${config.filters.minBaths || 'N/A'}`);
+  console.log("");
 
-  // Combinar resultados y generar preview
+  // Probar cada fuente activa del Excel
+  const allScrapedListings: any[] = [];
+  const sourceResults: Record<string, { scraped: number; filtered: number }> = {};
+  
+  for (const source of activeSources) {
+    console.log(`📊 Probando ${source.siteKey}...`);
+    try {
+      let scraped: any[] = [];
+      
+      if (source.siteKey === "remaxrd") {
+        scraped = await scrapeRemaxRD(source, config.filters);
+      } else if (source.siteKey === "c21sunsets") {
+        scraped = await scrapeC21Sunsets(source, config.filters);
+      } else {
+        console.warn(`⚠️  No hay scraper para ${source.siteKey}, saltando...`);
+        continue;
+      }
+      
+      // Guardar propiedades scrapeadas (sin filtrar aún)
+      allScrapedListings.push(...scraped);
+      sourceResults[source.siteKey] = {
+        scraped: scraped.length,
+        filtered: 0, // Se calculará después de aplicar filtros
+      };
+      
+      console.log(`✅ ${source.siteKey}: ${scraped.length} propiedades encontradas`);
+      if (scraped.length > 0) {
+        console.log(`   Ejemplo: ${scraped[0].title} - $${scraped[0].priceUSD || "Consultar"}`);
+      }
+    } catch (err: any) {
+      console.error(`❌ Error en ${source.siteKey}:`, err.message);
+      sourceResults[source.siteKey] = {
+        scraped: 0,
+        filtered: 0,
+      };
+    }
+  }
+  
+  // Aplicar filtros del Excel a todas las propiedades combinadas (solo una vez)
+  console.log(`\n🔍 Aplicando filtros del Excel a ${allScrapedListings.length} propiedades encontradas...`);
+  const allListings = applyFilters(allScrapedListings, config.filters);
+  
+  // Actualizar resultados filtrados por fuente
+  Object.keys(sourceResults).forEach(siteKey => {
+    const siteListings = allListings.filter(l => l.siteKey === siteKey);
+    sourceResults[siteKey].filtered = siteListings.length;
+  });
+  
+  console.log(`✅ Después de aplicar filtros: ${allListings.length} propiedades (${allScrapedListings.length - allListings.length} filtradas)`);
+
+  // Generar preview con las propiedades ya scrapeadas y filtradas
   console.log("\n📧 Generando preview del email...");
   try {
-    const remaxListings = await scrapeRemaxRD(testConfig, testFilters);
-    const c21Listings = await scrapeC21Sunsets(c21Config, testFilters);
-    // Usar todas las propiedades encontradas para el preview (sin límite)
-    const allListings = [...remaxListings, ...c21Listings];
 
     if (allListings.length === 0) {
       console.log("⚠️  No se encontraron propiedades para generar preview");
@@ -119,31 +164,69 @@ async function testScrapers() {
 
     // También generar un resumen JSON
     const summaryPath = path.resolve("storage", "scraping-summary.json");
+    const summaryData: Record<string, any> = {
+      timestamp: new Date().toISOString(),
+      preview: {
+        totalInPreview: allListings.length,
+        previewPath,
+      },
+    };
+    
+    // Agregar resultados por fuente
+    Object.keys(sourceResults).forEach(siteKey => {
+      const results = sourceResults[siteKey];
+      const siteListings = allListings.filter(l => l.siteKey === siteKey);
+      summaryData[siteKey] = {
+        scraped: results.scraped,
+        filtered: results.filtered,
+        listings: siteListings.slice(0, 3),
+      };
+    });
+    
     await fs.promises.writeFile(
       summaryPath,
-      JSON.stringify(
-        {
-          timestamp: new Date().toISOString(),
-          remaxrd: {
-            count: remaxListings.length,
-            listings: remaxListings.slice(0, 3),
-          },
-          c21sunsets: {
-            count: c21Listings.length,
-            listings: c21Listings.slice(0, 3),
-          },
-          preview: {
-            totalInPreview: allListings.length,
-            previewPath,
-          },
-        },
-        null,
-        2,
-      ),
+      JSON.stringify(summaryData, null, 2),
     );
     console.log(`📄 Resumen guardado: ${summaryPath}`);
+    
+    // Log final con resumen completo
+    const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+    console.log("\n" + "=".repeat(60));
+    console.log("📊 RESUMEN FINAL DE LA EJECUCIÓN");
+    console.log("=".repeat(60));
+    console.log(`⏱️  Duración total: ${duration}s`);
+    console.log("\n📋 Configuración utilizada (desde Excel):");
+    console.log("   Fuentes activas:");
+    activeSources.forEach(source => {
+      const results = sourceResults[source.siteKey] || { scraped: 0, filtered: 0 };
+      console.log(`     - ${source.siteKey}: ${results.scraped} encontradas, ${results.filtered} después de filtros`);
+    });
+    console.log("   Filtros aplicados:");
+    console.log(`     - Precio máximo: ${config.filters.maxPriceUSD ? '$' + config.filters.maxPriceUSD.toLocaleString() + ' USD' : 'N/A'}`);
+    console.log(`     - Precio mínimo: ${config.filters.minPriceUSD ? '$' + config.filters.minPriceUSD.toLocaleString() + ' USD' : 'N/A'}`);
+    console.log(`     - Ciudad: ${config.filters.city || 'N/A'}`);
+    console.log(`     - Dormitorios mínimos: ${config.filters.minBeds || 'N/A'}`);
+    console.log(`     - Baños mínimos: ${config.filters.minBaths || 'N/A'}`);
+    console.log("\n📈 Resultados:");
+    const totalScraped = Object.values(sourceResults).reduce((sum, r) => sum + r.scraped, 0);
+    const totalFiltered = allListings.length;
+    console.log(`     - Total antes de filtros: ${totalScraped} propiedades`);
+    console.log(`     - Total después de filtros: ${totalFiltered} propiedades`);
+    console.log(`     - Propiedades filtradas: ${totalScraped - totalFiltered}`);
+    console.log(`     - Preview generado: ${previewPath}`);
+    console.log("=".repeat(60) + "\n");
   } catch (err) {
     console.error("❌ Error al generar preview:", err);
+    
+    // Log final incluso en caso de error
+    const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+    console.log("\n" + "=".repeat(60));
+    console.log("❌ EJECUCIÓN FINALIZADA CON ERRORES");
+    console.log("=".repeat(60));
+    console.log(`⏱️  Duración: ${duration}s`);
+    console.log(`📋 Configuración utilizada (desde Excel):`);
+    console.log(`   Filtros: ${JSON.stringify(config.filters, null, 2)}`);
+    console.log("=".repeat(60) + "\n");
   }
 }
 

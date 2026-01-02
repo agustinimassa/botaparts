@@ -16,6 +16,7 @@ export type Listing = {
 
 export type Filters = {
   maxPriceUSD?: number;
+  minPriceUSD?: number;
   country?: string;
   city?: string;
   typeProperty?: string[];

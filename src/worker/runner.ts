@@ -13,7 +13,27 @@ const registry = {
 };
 
 export const runJob = async (config: ExcelConfig): Promise<Listing[]> => {
+  const startTime = Date.now();
+  
+  // Log inicial de configuración
+  logger.info({
+    sources: config.sources.map(s => ({
+      siteKey: s.siteKey,
+      url: s.url,
+      maxPages: s.maxPages,
+      active: s.active,
+    })),
+    filters: config.filters,
+    notifications: {
+      emails: config.notifications.emails?.length || 0,
+      whatsappNumbers: config.notifications.whatsappNumbers?.length || 0,
+      subjectTemplate: config.notifications.subjectTemplate,
+    },
+  }, "🚀 Iniciando job de scraping con configuración");
+
   const all: Listing[] = [];
+  const sourceResults: Record<string, number> = {};
+  
   for (const source of config.sources) {
     const scraper = registry[source.siteKey as keyof typeof registry];
     if (!scraper) {
@@ -22,12 +42,19 @@ export const runJob = async (config: ExcelConfig): Promise<Listing[]> => {
     }
     const result = await scraper(source, config.filters);
     all.push(...result);
+    sourceResults[source.siteKey] = result.length;
   }
 
   const filtered = applyFilters(all, config.filters);
   const fresh = filterNewListings(filtered);
+  
   if (!fresh.length) {
-    logger.info("Sin nuevos resultados");
+    logger.info({
+      totalScraped: all.length,
+      afterFilters: filtered.length,
+      afterDedup: fresh.length,
+      duration: `${((Date.now() - startTime) / 1000).toFixed(2)}s`,
+    }, "✅ Job completado: Sin nuevos resultados");
     return [];
   }
 
@@ -38,7 +65,31 @@ export const runJob = async (config: ExcelConfig): Promise<Listing[]> => {
   );
   await sendWhatsappSummary(config.notifications.whatsappNumbers || [], fresh);
   appendSent(fresh);
-  logger.info({ nuevos: fresh.length }, "Notificaciones enviadas");
+  
+  // Log final con resumen completo
+  const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+  logger.info({
+    summary: {
+      duration: `${duration}s`,
+      sources: {
+        total: config.sources.length,
+        results: sourceResults,
+      },
+      listings: {
+        scraped: all.length,
+        afterFilters: filtered.length,
+        afterDedup: fresh.length,
+        new: fresh.length,
+      },
+    },
+    filters: config.filters,
+    notifications: {
+      emails: config.notifications.emails || [],
+      whatsappNumbers: config.notifications.whatsappNumbers || [],
+      sent: true,
+    },
+  }, "✅ Job completado exitosamente");
+  
   return fresh;
 };
 

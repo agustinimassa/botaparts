@@ -7,33 +7,76 @@ export const scrapeC21Sunsets = async (
   filters: Filters,
 ): Promise<Listing[]> => {
   const headless = process.env.PLAYWRIGHT_HEADLESS !== 'false';
-  const browser = await chromium.launch({ headless });
-  const page = await browser.newPage();
+  const browser = await chromium.launch({ 
+    headless,
+    // Configuraciones adicionales para evitar bloqueos de Cloudflare
+    args: [
+      '--disable-blink-features=AutomationControlled',
+      '--disable-dev-shm-usage',
+      '--no-sandbox',
+    ],
+    // Timeout global para evitar que se quede colgado
+    timeout: 60000, // 60 segundos máximo
+  });
+  
+  // Crear contexto con user agent y headers configurados
+  const context = await browser.newContext({
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    extraHTTPHeaders: {
+      'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
+    },
+  });
+  
+  const page = await context.newPage();
+  
   const listings: Listing[] = [];
   const maxPages = config.maxPages || 5;
   const seenUrls = new Set<string>();
   
+  // Timeout global para toda la operación de scraping
+  const globalTimeout = setTimeout(() => {
+    logger.error({ url: config.url }, "⏱️  Timeout global alcanzado (2 minutos), cerrando scraper");
+    browser.close().catch(() => {});
+  }, 120000); // 2 minutos máximo
+  
   try {
-    logger.info({ url: config.url }, "Iniciando navegación a C21 Sunsets");
+    logger.info({ url: config.url, headless }, "Iniciando navegación a C21 Sunsets");
     
-    // Usar 'load' en lugar de 'networkidle' que es más estricto
+    // Usar Promise.race para tener un timeout más estricto
+    const navigationPromise = page.goto(config.url, { 
+      waitUntil: "load", 
+      timeout: 25000 // 25 segundos
+    });
+    
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Navigation timeout")), 25000)
+    );
+    
     try {
-      await page.goto(config.url, { waitUntil: "load", timeout: 20000 });
+      await Promise.race([navigationPromise, timeoutPromise]);
       logger.info({ url: config.url }, "Página cargada, esperando contenido...");
-    } catch (gotoErr) {
-      logger.warn({ err: gotoErr, url: config.url }, "Timeout en page.goto, continuando con domcontentloaded...");
-      // Intentar con domcontentloaded como fallback
+    } catch (gotoErr: any) {
+      logger.warn({ err: gotoErr, url: config.url }, "Timeout en page.goto, intentando domcontentloaded...");
+      // Intentar con domcontentloaded como fallback (más rápido)
       try {
-        await page.goto(config.url, { waitUntil: "domcontentloaded", timeout: 20000 });
+        await Promise.race([
+          page.goto(config.url, { waitUntil: "domcontentloaded", timeout: 15000 }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("DOM timeout")), 15000))
+        ]);
         logger.info({ url: config.url }, "Página cargada con domcontentloaded");
-      } catch (domErr) {
-        logger.error({ err: domErr, url: config.url }, "Error crítico al cargar la página");
-        throw domErr;
+      } catch (domErr: any) {
+        logger.error({ err: domErr, url: config.url }, "❌ Error crítico al cargar la página - abortando scraper");
+        throw new Error(`No se pudo cargar la página después de múltiples intentos: ${domErr.message}`);
       }
     }
     
-    // Esperar un momento para que el contenido dinámico se renderice
-    await page.waitForTimeout(2000);
+    // Esperar tiempo reducido para Cloudflare (3 segundos en lugar de 5)
+    await Promise.race([
+      page.waitForTimeout(3000),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Wait timeout")), 5000))
+    ]).catch(() => {
+      logger.warn("Timeout en waitForTimeout, continuando...");
+    });
     
     // Verificar estado inicial de la página
     const initialCheck = await page.evaluate(() => {
@@ -47,30 +90,39 @@ export const scrapeC21Sunsets = async (
     });
     logger.info({ initialCheck }, "Estado inicial de la página C21 Sunsets");
     
-    // Esperar a que las propiedades carguen con múltiples estrategias
+    // Esperar a que las propiedades carguen con múltiples estrategias (con timeout estricto)
     try {
-      // Intentar esperar el selector article con timeout más largo para carga inicial (10 segundos)
-      await page.waitForSelector('article', { timeout: 10000 });
+      // Intentar esperar el selector article con timeout reducido (8 segundos)
+      await Promise.race([
+        page.waitForSelector('article', { timeout: 8000 }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Selector timeout")), 8000))
+      ]);
       logger.info("Selector 'article' encontrado");
     } catch (err) {
       // Si falla, esperar a que aparezca cualquier contenido relacionado con propiedades
       logger.warn({ err, initialCheck }, "Timeout esperando 'article', intentando estrategia alternativa...");
       try {
-        // Esperar a que aparezca texto que indique que hay propiedades
-        await page.waitForFunction(
-          () => {
-            const hasArticles = document.querySelectorAll('article').length > 0;
-            const hasPropertyText = document.body.textContent?.includes('propiedades') || 
-                                   document.body.textContent?.includes('properties') ||
-                                   document.body.textContent?.includes('US$');
-            return hasArticles || hasPropertyText;
-          },
-          { timeout: 10000 }
-        );
+        // Esperar a que aparezca texto que indique que hay propiedades (timeout reducido)
+        await Promise.race([
+          page.waitForFunction(
+            () => {
+              const hasArticles = document.querySelectorAll('article').length > 0;
+              const hasPropertyText = document.body.textContent?.includes('propiedades') || 
+                                     document.body.textContent?.includes('properties') ||
+                                     document.body.textContent?.includes('US$');
+              return hasArticles || hasPropertyText;
+            },
+            { timeout: 8000 }
+          ),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("WaitFunction timeout")), 8000))
+        ]);
         logger.info("Contenido de propiedades detectado mediante waitForFunction");
-        // Dar tiempo adicional para que se rendericen los artículos
-        await page.waitForTimeout(2000);
-      } catch (altErr) {
+        // Dar tiempo adicional para que se rendericen los artículos (con timeout)
+        await Promise.race([
+          page.waitForTimeout(2000),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("Wait timeout")), 3000))
+        ]).catch(() => {});
+      } catch (altErr: any) {
         // Verificar estado final antes de fallar
         const finalCheck = await page.evaluate(() => {
           return {
@@ -81,9 +133,10 @@ export const scrapeC21Sunsets = async (
                             document.body.textContent?.includes('properties') ||
                             document.body.textContent?.includes('US$'),
           };
-        });
-        logger.error({ err: altErr, finalCheck }, "No se pudo cargar el contenido de la página C21 Sunsets");
-        throw altErr;
+        }).catch(() => ({ articleCount: 0, url: config.url, title: 'Error', hasPropertyText: false }));
+        
+        logger.error({ err: altErr, finalCheck }, "❌ No se pudo cargar el contenido de la página C21 Sunsets - abortando");
+        throw new Error(`Timeout esperando contenido: ${altErr.message}`);
       }
     }
     
@@ -128,14 +181,38 @@ export const scrapeC21Sunsets = async (
         const location = strong?.textContent?.trim() || '';
         const type = strong?.nextSibling?.textContent?.trim() || '';
         
-        // Buscar el botón con detalles (formato "X · Y · ...")
-        const buttons = Array.from(article.querySelectorAll('button'));
-        const detailButton = buttons.find((btn) => {
-          const text = btn.textContent || '';
-          return /\d+\s*·\s*\d/.test(text);
-        });
+        // Buscar el elemento que contiene los detalles (formato "X · Y · ... · Z m²")
+        // El elemento puede ser un <span> con clase "m-0 fs-80" o un <a> con clase "card-body"
+        let detailsText = '';
         
-        const detailsText = detailButton?.textContent || '';
+        // Estrategia 1: Buscar el <span> con clase "m-0 fs-80" que contiene los iconos y números
+        const detailsSpan = article.querySelector('span.m-0.fs-80');
+        if (detailsSpan) {
+          detailsText = detailsSpan.textContent?.trim() || '';
+        }
+        
+        // Estrategia 2: Si no se encuentra el span, buscar en el <a> con clase "card-body"
+        if (!detailsText || !/\d+\s*·\s*\d/.test(detailsText)) {
+          const cardBody = article.querySelector('a.card-body');
+          if (cardBody) {
+            detailsText = cardBody.textContent?.trim() || '';
+          }
+        }
+        
+        // Estrategia 3: Buscar cualquier elemento que contenga el patrón
+        if (!detailsText || !/\d+\s*·\s*\d/.test(detailsText)) {
+          const allElements = Array.from(article.querySelectorAll('*'));
+          const elementWithPattern = allElements.find((el) => {
+            const text = el.textContent || '';
+            return /\d+\s*·\s*\d/.test(text) && text.length < 200;
+          });
+          if (elementWithPattern) {
+            detailsText = elementWithPattern.textContent?.trim() || '';
+          }
+        }
+        
+        // Extraer los datos del texto encontrado
+        // Formato: "número · número · texto · número m²" (dormitorios · baños · vista · área)
         const bedsMatch = detailsText.match(/(\d+)\s*·/);
         const afterBeds = detailsText.split('·').slice(1).join('·');
         const bathsMatch = afterBeds.match(/(\d+½?)/);
@@ -417,10 +494,28 @@ export const scrapeC21Sunsets = async (
     }
     
     logger.info({ count: listings.length, pages: maxPages, site: config.siteKey }, "Propiedades encontradas en C21 Sunsets");
-  } catch (err) {
-    logger.error({ err, url: config.url }, "Error en scraper C21 Sunsets");
+  } catch (err: any) {
+    logger.error({ err, url: config.url, message: err.message }, "❌ Error en scraper C21 Sunsets");
+    // Retornar lista vacía en caso de error para no bloquear otros scrapers
+    return [];
   } finally {
-    await browser.close();
+    // Limpiar timeout global
+    clearTimeout(globalTimeout);
+    
+    // Cerrar contexto y browser de forma segura
+    try {
+      await context.close().catch(() => {});
+      await browser.close().catch(() => {});
+      logger.debug("Navegador cerrado correctamente");
+    } catch (closeErr) {
+      logger.warn({ err: closeErr }, "Error al cerrar navegador (ignorado)");
+      // Forzar cierre si falla el cierre normal
+      try {
+        await browser.close();
+      } catch {
+        // Ignorar errores al forzar cierre
+      }
+    }
   }
   return listings;
 };

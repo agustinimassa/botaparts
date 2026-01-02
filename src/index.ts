@@ -1,8 +1,8 @@
-import dotenv from "dotenv";
+import { loadEnv } from "./utils/env.js";
 import { startServer } from "./api/server.js";
 import { logger } from "./utils/logger.js";
 
-dotenv.config();
+loadEnv();
 
 const main = async () => {
   try {

@@ -1,54 +1,56 @@
 {
-  "timestamp": "2026-01-02T04:58:48.791Z",
+  "timestamp": "2026-01-02T14:55:11.658Z",
+  "preview": {
+    "totalInPreview": 9,
+    "previewPath": "/Users/agusmassa/Desktop/apps/bothouse/storage/email-preview.html"
+  },
   "remaxrd": {
-    "count": 128,
+    "scraped": 288,
+    "filtered": 8,
     "listings": [
       {
         "siteKey": "remaxrd",
-        "listingId": "216210",
-        "title": "Invierte Paraiso Apartamento Amueblado Bayahibe 216210",
-        "url": "https://remaxrd.com/propiedad/apartamento/invierte-en-el-paraiso-apartamento-amueblado-en-bayahibe-216210?city=bayahibe",
-        "priceUSD": 190000,
-        "location": "DOMINICUS, BAYAHIBE",
-        "beds": 1,
-        "baths": 1,
-        "area": "62.80 m²",
-        "images": [
-          "https://images.remaxrd.com/media/pictures/watermark/small/D-2745-1766424388-eaccd3ce-a28b-47bf-b637-9d0db9a8cbcf.webp"
-        ],
-        "badges": [
-          "Exclusivo"
-        ]
-      },
-      {
-        "siteKey": "remaxrd",
-        "listingId": "215572",
-        "title": "Apartamento Amueblado 5151 Bayahibe 215572",
-        "url": "https://remaxrd.com/propiedad/apartamento/apartamento-amueblado-de-5151-m2-en-bayahibe-215572?city=bayahibe",
-        "priceUSD": 145000,
-        "location": "CENTRO PUEBLO, BAYAHIBE",
-        "beds": 1,
-        "baths": 1,
-        "area": "51.51 m²",
-        "images": [
-          "https://images.remaxrd.com/media/pictures/watermark/small/D-2392-1764611103-8d08280a-5912-4dc7-ab09-fc84088d5fcc.jpg"
-        ],
-        "badges": [
-          "Exclusivo"
-        ]
-      },
-      {
-        "siteKey": "remaxrd",
-        "listingId": "214276",
-        "title": "Penthouse Lujo Jacuzzi Cerca Playa Dominicus",
-        "url": "https://remaxrd.com/propiedad/apartamento/penthouse-de-lujo-con-jacuzzi-cerca-de-playa-dominicus-214276?city=bayahibe",
-        "priceUSD": 355000,
-        "location": "DOMINICUS, BAYAHIBE",
+        "listingId": "214560",
+        "title": "Apartamento Norah Beach 214560",
+        "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-norah-beach-214560?city=hig%C3%BCey",
+        "priceUSD": 130000,
         "beds": 2,
         "baths": 2,
-        "area": "173.89 m²",
+        "area": "73.00 m²",
         "images": [
-          "https://images.remaxrd.com/media/pictures/watermark/small/R-214276-1764955586-2b29d544-838c-43fd-a390-365d9d20767f.webp"
+          "https://images.remaxrd.com/media/pictures/watermark/small/D-1839-1761931548-0688a226-206b-4110-8cd6-769f59539dd0.webp"
+        ],
+        "badges": [
+          "Exclusivo"
+        ]
+      },
+      {
+        "siteKey": "remaxrd",
+        "listingId": "214487",
+        "title": "Apartamento Amueblado Bavaro Condominio Selene 214487",
+        "url": "https://remaxrd.com/propiedad/apartamento/apartamento-amueblado-en-bavaro-condominio-selene-v-214487?city=bavaro",
+        "priceUSD": 129000,
+        "beds": 2,
+        "baths": 2,
+        "area": "89.09 m²",
+        "images": [
+          "https://images.remaxrd.com/media/pictures/watermark/small/R-214487-1761881671-baf5d3fb-2777-4d0d-83a2-4e78d1b67530.png"
+        ],
+        "badges": [
+          "Exclusivo"
+        ]
+      },
+      {
+        "siteKey": "remaxrd",
+        "listingId": "185602",
+        "title": "Apartamento Nuevo Venta Dormitorios Punta Cana",
+        "url": "https://remaxrd.com/propiedad/apartamento/apartamento-nuevo-en-venta-2-dormitorios-en-punta-cana-185602?city=bavaro",
+        "priceUSD": 145000,
+        "beds": 2,
+        "baths": 2,
+        "area": "98.18 m²",
+        "images": [
+          "https://images.remaxrd.com/media/pictures/watermark/small/13405-1740772653-9156c9a7b55105e974c9a24b83050800.jpg"
         ],
         "badges": [
           "Exclusivo"
@@ -57,7 +59,8 @@
     ]
   },
   "c21sunsets": {
-    "count": 12,
+    "scraped": 12,
+    "filtered": 1,
     "listings": [
       {
         "siteKey": "c21sunsets",
@@ -65,36 +68,13 @@
         "title": "Exclusive Villa In Tracadero – Luxury, Privacy & Sustainability",
         "url": "https://c21sunsets.com/es/d/exclusive-villa-in-tracadero-luxury-privacy-sustainability-casas-unifamiliares-en-venta-bayahibe-la-altagracia-1159241",
         "location": "Bayahibe (La Altagracia)",
+        "beds": 3,
+        "baths": 4,
+        "area": "826 m²",
         "images": [
           "https://c21sunsets.com/images/udx/1159241/w470/1753220249081863.jpg?vno=1753220632"
         ]
-      },
-      {
-        "siteKey": "c21sunsets",
-        "listingId": "1156188",
-        "title": "Villa Grande En El Corazon De Dominicus",
-        "url": "https://c21sunsets.com/es/d/villa-grande-en-el-corazon-de-dominicus-casas-unifamiliares-en-venta-bayahibe-la-altagracia-1156188",
-        "priceUSD": 799000,
-        "location": "Bayahibe (La Altagracia)",
-        "images": [
-          "https://c21sunsets.com/images/udx/1156188/w470/1727126220260010.jpg?vno=1741637419"
-        ]
-      },
-      {
-        "siteKey": "c21sunsets",
-        "listingId": "1157892",
-        "title": "Elegant Penthouse Fully Furnished Near The Beach",
-        "url": "https://c21sunsets.com/es/d/elegant-penthouse-fully-furnished-near-the-beach-condominio-apartamento-en-venta-bayahibe-la-altagracia-1157892",
-        "priceUSD": 499000,
-        "location": "Bayahibe (La Altagracia)",
-        "images": [
-          "https://c21sunsets.com/images/udx/1157892/w470/1741643861114405.jpg?vno=1741794004"
-        ]
       }
     ]
-  },
-  "preview": {
-    "totalInPreview": 140,
-    "previewPath": "/Users/agusmassa/Desktop/apps/bothouse/storage/email-preview.html"
   }
 }

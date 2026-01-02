@@ -7,33 +7,54 @@ export const scrapeRemaxRD = async (
   filters: Filters,
 ): Promise<Listing[]> => {
   const headless = process.env.PLAYWRIGHT_HEADLESS !== 'false';
-  const browser = await chromium.launch({ headless });
-  const page = await browser.newPage();
+  const browser = await chromium.launch({ 
+    headless,
+    timeout: 60000, // 60 segundos máximo
+  });
+  const context = await browser.newContext();
+  const page = await context.newPage();
   const listings: Listing[] = [];
   const maxPages = config.maxPages || 5;
   const seenUrls = new Set<string>();
   
+  // Timeout global para toda la operación de scraping
+  const globalTimeout = setTimeout(() => {
+    logger.error({ url: config.url }, "⏱️  Timeout global alcanzado (2 minutos), cerrando scraper");
+    browser.close().catch(() => {});
+  }, 120000); // 2 minutos máximo
+  
   try {
     logger.info({ url: config.url }, "Iniciando navegación a RE/MAX RD");
     
-    // Usar 'load' en lugar de 'networkidle' que es más estricto
+    // Usar Promise.race para tener un timeout más estricto
     try {
-      await page.goto(config.url, { waitUntil: "load", timeout: 20000 });
+      await Promise.race([
+        page.goto(config.url, { waitUntil: "load", timeout: 20000 }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("Navigation timeout")), 20000))
+      ]);
       logger.info({ url: config.url }, "Página cargada, esperando contenido...");
-    } catch (gotoErr) {
+    } catch (gotoErr: any) {
       logger.warn({ err: gotoErr, url: config.url }, "Timeout en page.goto, continuando con domcontentloaded...");
       // Intentar con domcontentloaded como fallback
       try {
-        await page.goto(config.url, { waitUntil: "domcontentloaded", timeout: 20000 });
+        await Promise.race([
+          page.goto(config.url, { waitUntil: "domcontentloaded", timeout: 15000 }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error("DOM timeout")), 15000))
+        ]);
         logger.info({ url: config.url }, "Página cargada con domcontentloaded");
-      } catch (domErr) {
-        logger.error({ err: domErr, url: config.url }, "Error crítico al cargar la página");
-        throw domErr;
+      } catch (domErr: any) {
+        logger.error({ err: domErr, url: config.url }, "❌ Error crítico al cargar la página - abortando scraper");
+        throw new Error(`No se pudo cargar la página después de múltiples intentos: ${domErr.message}`);
       }
     }
     
-    // Esperar un momento para que el contenido dinámico se renderice
-    await page.waitForTimeout(2000);
+    // Esperar un momento para que el contenido dinámico se renderice (con timeout)
+    await Promise.race([
+      page.waitForTimeout(2000),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Wait timeout")), 3000))
+    ]).catch(() => {
+      logger.warn("Timeout en waitForTimeout, continuando...");
+    });
     
     // Verificar estado inicial de la página
     const initialCheck = await page.evaluate(() => {
@@ -300,10 +321,28 @@ export const scrapeRemaxRD = async (
     }
     
     logger.info({ count: listings.length, pages: maxPages, site: config.siteKey }, "Propiedades encontradas en RE/MAX RD");
-  } catch (err) {
-    logger.error({ err, url: config.url }, "Error en scraper RE/MAX RD");
+  } catch (err: any) {
+    logger.error({ err, url: config.url, message: err.message }, "❌ Error en scraper RE/MAX RD");
+    // Retornar lista vacía en caso de error para no bloquear otros scrapers
+    return [];
   } finally {
-    await browser.close();
+    // Limpiar timeout global
+    clearTimeout(globalTimeout);
+    
+    // Cerrar contexto y browser de forma segura
+    try {
+      await context.close().catch(() => {});
+      await browser.close().catch(() => {});
+      logger.debug("Navegador cerrado correctamente");
+    } catch (closeErr) {
+      logger.warn({ err: closeErr }, "Error al cerrar navegador (ignorado)");
+      // Forzar cierre si falla el cierre normal
+      try {
+        await browser.close();
+      } catch {
+        // Ignorar errores al forzar cierre
+      }
+    }
   }
   return listings;
 };

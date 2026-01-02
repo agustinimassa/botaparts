@@ -20,7 +20,11 @@ npm install
 
 ## Configuración (.env)
 
-Crea un archivo `.env` en la raíz del proyecto basándote en `env.example`. Las variables disponibles son:
+Crea un archivo `.env` en la raíz del proyecto basándote en `env.example`. También puedes crear un archivo `.env.local` que sobrescribirá las variables de `.env` (útil para configuraciones locales que no quieres compartir).
+
+**Nota:** El sistema carga primero `.env` y luego `.env.local` (si existe), por lo que las variables en `.env.local` tienen prioridad.
+
+Las variables disponibles son:
 
 ### Variables Generales
 - `PORT` (opcional, default: `3000`): Puerto donde escucha el servidor API
@@ -47,6 +51,22 @@ Crea un archivo `.env` en la raíz del proyecto basándote en `env.example`. Las
 - `META_WHATSAPP_TOKEN`: Token de acceso de Meta (si usas Meta WhatsApp Business API)
 - `META_PHONE_NUMBER_ID`: Phone Number ID de Meta (si usas Meta)
 
+### Variables Google Drive/Sheets (REQUERIDO)
+- `GOOGLE_SHEET_URL` (recomendado): URL de Google Sheet (más simple, no requiere credenciales si el sheet es público)
+  - Acepta tanto una URL normal `.../spreadsheets/d/<FILE_ID>/edit?gid=...` como una URL publicada `.../spreadsheets/d/e/<PUBLISHED_ID>/pubhtml`
+- `GOOGLE_SHEET_PUBLISHED_URL` (legacy): sigue funcionando, pero se recomienda usar `GOOGLE_SHEET_URL`
+- `GOOGLE_DRIVE_FILE_ID`: ID del archivo Excel en Google Drive (requiere credenciales)
+- `GOOGLE_DRIVE_CREDENTIALS_PATH`: Ruta al archivo JSON de credenciales de Service Account (solo si usas `GOOGLE_DRIVE_FILE_ID`)
+- `GOOGLE_DRIVE_CREDENTIALS_JSON`: Credenciales como JSON string (alternativa a `GOOGLE_DRIVE_CREDENTIALS_PATH`)
+
+**⚠️ IMPORTANTE:** El sistema **requiere** configuración de Google Sheets/Drive. Debes configurar **una** de estas opciones:
+- `GOOGLE_SHEET_URL` (recomendado, más simple)
+- `GOOGLE_DRIVE_FILE_ID` + `GOOGLE_DRIVE_CREDENTIALS_PATH` (o `GOOGLE_DRIVE_CREDENTIALS_JSON`)
+
+**💡 Recomendación:** Usa `GOOGLE_SHEET_URL` con un sheet compartido como **“Cualquiera con el enlace” (Viewer)**. Si el sheet es privado, vas a necesitar Google Drive API (credenciales).
+
+**📖 Ver [GOOGLE_DRIVE_SETUP.md](./GOOGLE_DRIVE_SETUP.md) para instrucciones detalladas.**
+
 **Ejemplo mínimo para empezar (solo emails):**
 ```env
 SMTP_HOST=smtp.gmail.com
@@ -55,21 +75,23 @@ SMTP_USER=tu-email@gmail.com
 SMTP_PASS=tu-app-password
 ```
 
-## Excel esperado (`storage/config.xlsx`)
+## Excel esperado (Google Drive/Sheets - REQUERIDO)
 - Hoja `sources`: columnas `id`, `url`, `siteKey` (ej. `remaxrd`, `c21sunsets`), `active` (bool), `maxPages`, `paginateParam`, `selectorsProfile`, `scheduleKey`.
 - Hoja `filters`: `maxPriceUSD`, `country`, `city`, `typeProperty[]`, `minBeds`, `minBaths`, `textMustInclude`, `textMustExclude`.
 - Hoja `notifications`: `emails[]`, `whatsappNumbers[]`, `sendHourUTC`, `batchSize`, `subjectTemplate`, `whatsappTemplate`.
 - Hoja `sent`: `siteKey`, `listingId`, `hash`, `notifiedAt`.
 - Hoja `schedules` (opcional): `scheduleKey`, `cron`, `timezone`.
 
-Guarda el Excel en `storage/config.xlsx` o súbelo vía `POST /config/excel`.
+**⚠️ IMPORTANTE:** El archivo Excel **debe estar en Google Drive/Sheets**. El sistema descargará automáticamente el archivo desde Google Drive antes de leerlo. Configura las variables de entorno de Google Drive/Sheets (ver sección anterior).
+
+**Nota:** El archivo descargado se guarda temporalmente en `storage/config.xlsx` pero siempre se descarga desde Google Drive para asegurar que se use la versión más reciente.
 
 ## Endpoints
 
 ### API Principal
 - `GET /health` - Health check del servidor
-- `POST /config/excel` - Subir archivo Excel de configuración (multipart, campo `file`)
-- `POST /jobs/run` - Ejecutar job manual según configuración cargada
+- `POST /config/excel` - Subir archivo Excel de configuración (multipart, campo `file`) - **Nota:** Solo para testing local. El job siempre descarga desde Google Drive/Sheets.
+- `POST /jobs/run` - Ejecutar job manual según configuración cargada (descarga desde Google Drive/Sheets)
 
 ### Preview de HTMLs
 - `GET /preview/email` - Ver preview del email generado

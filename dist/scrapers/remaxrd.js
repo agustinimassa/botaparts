@@ -8,15 +8,46 @@ export const scrapeRemaxRD = async (config, filters) => {
     const maxPages = config.maxPages || 5;
     const seenUrls = new Set();
     try {
-        await page.goto(config.url, { waitUntil: "networkidle", timeout: 4000 });
+        logger.info({ url: config.url }, "Iniciando navegación a RE/MAX RD");
+        // Usar 'load' en lugar de 'networkidle' que es más estricto
+        try {
+            await page.goto(config.url, { waitUntil: "load", timeout: 20000 });
+            logger.info({ url: config.url }, "Página cargada, esperando contenido...");
+        }
+        catch (gotoErr) {
+            logger.warn({ err: gotoErr, url: config.url }, "Timeout en page.goto, continuando con domcontentloaded...");
+            // Intentar con domcontentloaded como fallback
+            try {
+                await page.goto(config.url, { waitUntil: "domcontentloaded", timeout: 20000 });
+                logger.info({ url: config.url }, "Página cargada con domcontentloaded");
+            }
+            catch (domErr) {
+                logger.error({ err: domErr, url: config.url }, "Error crítico al cargar la página");
+                throw domErr;
+            }
+        }
+        // Esperar un momento para que el contenido dinámico se renderice
+        await page.waitForTimeout(2000);
+        // Verificar estado inicial de la página
+        const initialCheck = await page.evaluate(() => {
+            return {
+                linkCount: document.querySelectorAll('a[href*="/propiedad/"]').length,
+                hasPropertyText: document.body.textContent?.includes('propiedades') ||
+                    document.body.textContent?.includes('US$') ||
+                    document.body.textContent?.includes('VENTA'),
+                bodyTextLength: document.body.textContent?.length || 0,
+            };
+        });
+        logger.info({ initialCheck }, "Estado inicial de la página RE/MAX RD");
         // Esperar a que las propiedades carguen con múltiples estrategias
         try {
-            // Intentar esperar el selector con timeout de 4 segundos
-            await page.waitForSelector('a[href*="/propiedad/"]', { timeout: 4000 });
+            // Intentar esperar el selector con timeout más largo para carga inicial (10 segundos)
+            await page.waitForSelector('a[href*="/propiedad/"]', { timeout: 10000 });
+            logger.info("Selector 'a[href*=\"/propiedad/\"]' encontrado");
         }
         catch (err) {
             // Si falla, esperar a que aparezca cualquier contenido relacionado con propiedades
-            logger.warn({ err }, "Timeout esperando propiedades, intentando estrategia alternativa...");
+            logger.warn({ err, initialCheck }, "Timeout esperando propiedades, intentando estrategia alternativa...");
             try {
                 // Esperar a que aparezca texto que indique que hay propiedades
                 await page.waitForFunction(() => {
@@ -25,17 +56,36 @@ export const scrapeRemaxRD = async (config, filters) => {
                         document.body.textContent?.includes('US$') ||
                         document.body.textContent?.includes('VENTA');
                     return hasProperties || hasPropertyText;
-                }, { timeout: 4000 });
+                }, { timeout: 10000 });
+                logger.info("Contenido de propiedades detectado mediante waitForFunction");
                 // Dar tiempo adicional para que se rendericen las propiedades
-                await page.waitForTimeout(4000);
+                await page.waitForTimeout(2000);
             }
             catch (altErr) {
-                logger.error({ err: altErr }, "No se pudo cargar el contenido de la página");
+                // Verificar estado final antes de fallar
+                const finalCheck = await page.evaluate(() => {
+                    return {
+                        linkCount: document.querySelectorAll('a[href*="/propiedad/"]').length,
+                        url: window.location.href,
+                        title: document.title,
+                        hasPropertyText: document.body.textContent?.includes('propiedades') ||
+                            document.body.textContent?.includes('US$') ||
+                            document.body.textContent?.includes('VENTA'),
+                    };
+                });
+                logger.error({ err: altErr, finalCheck }, "No se pudo cargar el contenido de la página RE/MAX RD");
                 throw altErr;
             }
         }
         // Función para extraer propiedades de la página actual
         const extractProperties = async () => {
+            // Verificar cuántos links hay antes de extraer
+            const linkCount = await page.evaluate(() => document.querySelectorAll('a[href*="/propiedad/"]').length);
+            logger.info({ linkCount }, "Links de propiedades encontrados antes de extraer");
+            if (linkCount === 0) {
+                logger.warn("No se encontraron links de propiedades en la página");
+                return 0;
+            }
             const propertyLinks = await page.$$eval('a[href*="/propiedad/"]', (links) => {
                 return links.map((link) => {
                     const card = link;
@@ -146,14 +196,17 @@ export const scrapeRemaxRD = async (config, filters) => {
                 });
             });
             let newCount = 0;
+            let skippedCount = 0;
             for (const prop of propertyLinks) {
                 // Evitar duplicados usando la URL como clave
                 const cleanUrl = prop.url.split('?')[0];
-                if (seenUrls.has(cleanUrl))
+                if (seenUrls.has(cleanUrl)) {
+                    skippedCount++;
                     continue;
+                }
                 seenUrls.add(cleanUrl);
                 const listingId = prop.code || prop.url.split('/').pop()?.split('?')[0] || prop.url;
-                listings.push({
+                const listing = {
                     siteKey: config.siteKey,
                     listingId,
                     title: prop.title || 'Sin título',
@@ -165,9 +218,12 @@ export const scrapeRemaxRD = async (config, filters) => {
                     area: prop.area ? `${prop.area} m²` : undefined,
                     images: prop.images || undefined,
                     badges: prop.badges || undefined,
-                });
+                };
+                listings.push(listing);
                 newCount++;
+                logger.debug({ listing: { title: listing.title, price: listing.priceUSD, url: listing.url } }, "Propiedad agregada");
             }
+            logger.info({ newCount, skippedCount, total: listings.length }, "Propiedades extraídas en esta iteración");
             return newCount;
         };
         // Extraer propiedades de la primera página

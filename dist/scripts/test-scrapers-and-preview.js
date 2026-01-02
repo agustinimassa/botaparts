@@ -2,7 +2,7 @@ import { scrapeRemaxRD } from "../scrapers/remaxrd.js";
 import { scrapeC21Sunsets } from "../scrapers/c21sunsets.js";
 import fs from "fs";
 import path from "path";
-import { renderHtml } from "../notifications/email/index.js";
+import { renderHtmlFromJson } from "../notifications/email/index.js";
 // Configuración de prueba
 const testConfig = {
     id: "test",
@@ -51,13 +51,48 @@ async function testScrapers() {
     try {
         const remaxListings = await scrapeRemaxRD(testConfig, testFilters);
         const c21Listings = await scrapeC21Sunsets(c21Config, testFilters);
-        const allListings = [...remaxListings, ...c21Listings].slice(0, 10); // Limitar a 10 para preview
+        // Usar todas las propiedades encontradas para el preview (sin límite)
+        const allListings = [...remaxListings, ...c21Listings];
         if (allListings.length === 0) {
             console.log("⚠️  No se encontraron propiedades para generar preview");
             return;
         }
-        // Generar HTML del email
-        const emailHtml = renderHtml(allListings);
+        // Agrupar propiedades por sitio para estadísticas
+        const listingsBySite = {};
+        allListings.forEach((listing) => {
+            if (!listingsBySite[listing.siteKey]) {
+                listingsBySite[listing.siteKey] = [];
+            }
+            listingsBySite[listing.siteKey].push(listing);
+        });
+        const getSiteName = (siteKey) => {
+            const siteNames = {
+                remaxrd: "RE/MAX RD",
+                c21sunsets: "Century 21 Sunsets",
+            };
+            return siteNames[siteKey.toLowerCase()] || siteKey.toUpperCase();
+        };
+        const siteStats = Object.keys(listingsBySite).map((siteKey) => ({
+            siteKey,
+            siteName: getSiteName(siteKey),
+            count: listingsBySite[siteKey].length,
+        }));
+        // Guardar datos raw en JSON (esto es lo que se actualiza cuando hay nuevos datos)
+        const dataPath = path.resolve("storage", "properties-data.json");
+        await fs.promises.writeFile(dataPath, JSON.stringify({
+            timestamp: new Date().toISOString(),
+            listings: allListings,
+            stats: {
+                total: allListings.length,
+                bySite: siteStats.reduce((acc, stat) => {
+                    acc[stat.siteKey] = stat.count;
+                    return acc;
+                }, {}),
+            },
+        }, null, 2));
+        console.log(`✅ Datos guardados en JSON: ${dataPath}`);
+        // Generar HTML estático que cargará el JSON dinámicamente
+        const emailHtml = renderHtmlFromJson();
         // Guardar preview
         const previewPath = path.resolve("storage", "email-preview.html");
         await fs.promises.mkdir(path.dirname(previewPath), { recursive: true });

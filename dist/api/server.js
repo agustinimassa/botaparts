@@ -8,10 +8,25 @@ import { runJob } from "../worker/runner.js";
 import { logger } from "../utils/logger.js";
 const app = Fastify({ logger: false });
 app.register(multipart);
-// Servir archivos estáticos de storage
+// Servir archivos estáticos de storage (incluye JSON y HTML)
 app.register(staticFiles, {
     root: path.resolve("storage"),
     prefix: "/storage/",
+});
+// Endpoint específico para servir el JSON de propiedades
+app.get("/api/properties-data", async (request, reply) => {
+    const dataPath = path.resolve("storage", "properties-data.json");
+    try {
+        if (!fs.existsSync(dataPath)) {
+            return reply.code(404).send({ error: "Datos no encontrados. Ejecuta 'npm run test:scrapers' primero." });
+        }
+        const json = await fs.promises.readFile(dataPath, "utf-8");
+        reply.type("application/json").send(JSON.parse(json));
+    }
+    catch (err) {
+        logger.error({ err }, "Error al leer datos");
+        return reply.code(500).send({ error: "Error al leer datos" });
+    }
 });
 app.get("/health", async () => ({ ok: true }));
 // Endpoint para ver el preview del email

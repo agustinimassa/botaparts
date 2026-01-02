@@ -8,15 +8,46 @@ export const scrapeC21Sunsets = async (config, filters) => {
     const maxPages = config.maxPages || 5;
     const seenUrls = new Set();
     try {
-        await page.goto(config.url, { waitUntil: "networkidle", timeout: 4000 });
+        logger.info({ url: config.url }, "Iniciando navegación a C21 Sunsets");
+        // Usar 'load' en lugar de 'networkidle' que es más estricto
+        try {
+            await page.goto(config.url, { waitUntil: "load", timeout: 20000 });
+            logger.info({ url: config.url }, "Página cargada, esperando contenido...");
+        }
+        catch (gotoErr) {
+            logger.warn({ err: gotoErr, url: config.url }, "Timeout en page.goto, continuando con domcontentloaded...");
+            // Intentar con domcontentloaded como fallback
+            try {
+                await page.goto(config.url, { waitUntil: "domcontentloaded", timeout: 20000 });
+                logger.info({ url: config.url }, "Página cargada con domcontentloaded");
+            }
+            catch (domErr) {
+                logger.error({ err: domErr, url: config.url }, "Error crítico al cargar la página");
+                throw domErr;
+            }
+        }
+        // Esperar un momento para que el contenido dinámico se renderice
+        await page.waitForTimeout(2000);
+        // Verificar estado inicial de la página
+        const initialCheck = await page.evaluate(() => {
+            return {
+                articleCount: document.querySelectorAll('article').length,
+                hasPropertyText: document.body.textContent?.includes('propiedades') ||
+                    document.body.textContent?.includes('properties') ||
+                    document.body.textContent?.includes('US$'),
+                bodyTextLength: document.body.textContent?.length || 0,
+            };
+        });
+        logger.info({ initialCheck }, "Estado inicial de la página C21 Sunsets");
         // Esperar a que las propiedades carguen con múltiples estrategias
         try {
-            // Intentar esperar el selector article con timeout de 4 segundos
-            await page.waitForSelector('article', { timeout: 4000 });
+            // Intentar esperar el selector article con timeout más largo para carga inicial (10 segundos)
+            await page.waitForSelector('article', { timeout: 10000 });
+            logger.info("Selector 'article' encontrado");
         }
         catch (err) {
             // Si falla, esperar a que aparezca cualquier contenido relacionado con propiedades
-            logger.warn({ err }, "Timeout esperando 'article', intentando estrategia alternativa...");
+            logger.warn({ err, initialCheck }, "Timeout esperando 'article', intentando estrategia alternativa...");
             try {
                 // Esperar a que aparezca texto que indique que hay propiedades
                 await page.waitForFunction(() => {
@@ -25,17 +56,36 @@ export const scrapeC21Sunsets = async (config, filters) => {
                         document.body.textContent?.includes('properties') ||
                         document.body.textContent?.includes('US$');
                     return hasArticles || hasPropertyText;
-                }, { timeout: 4000 });
+                }, { timeout: 10000 });
+                logger.info("Contenido de propiedades detectado mediante waitForFunction");
                 // Dar tiempo adicional para que se rendericen los artículos
-                await page.waitForTimeout(4000);
+                await page.waitForTimeout(2000);
             }
             catch (altErr) {
-                logger.error({ err: altErr }, "No se pudo cargar el contenido de la página");
+                // Verificar estado final antes de fallar
+                const finalCheck = await page.evaluate(() => {
+                    return {
+                        articleCount: document.querySelectorAll('article').length,
+                        url: window.location.href,
+                        title: document.title,
+                        hasPropertyText: document.body.textContent?.includes('propiedades') ||
+                            document.body.textContent?.includes('properties') ||
+                            document.body.textContent?.includes('US$'),
+                    };
+                });
+                logger.error({ err: altErr, finalCheck }, "No se pudo cargar el contenido de la página C21 Sunsets");
                 throw altErr;
             }
         }
         // Función para extraer propiedades de la página actual
         const extractProperties = async () => {
+            // Verificar cuántos artículos hay antes de extraer
+            const articleCount = await page.evaluate(() => document.querySelectorAll('article').length);
+            logger.info({ articleCount }, "Artículos encontrados antes de extraer propiedades");
+            if (articleCount === 0) {
+                logger.warn("No se encontraron artículos en la página");
+                return 0;
+            }
             const properties = await page.$$eval('article', (articles) => {
                 return articles.map((article) => {
                     // Buscar precio - puede estar en un div, span u otro elemento que contiene "US$"
@@ -173,15 +223,21 @@ export const scrapeC21Sunsets = async (config, filters) => {
                 });
             });
             let newCount = 0;
+            let skippedCount = 0;
             for (const prop of properties) {
-                if (!prop.url || prop.url === 'NOT_FOUND')
+                if (!prop.url || prop.url === 'NOT_FOUND') {
+                    skippedCount++;
+                    logger.debug({ prop }, "Propiedad sin URL válida, saltando");
                     continue;
+                }
                 // Evitar duplicados usando la URL como clave
                 const cleanUrl = prop.url.split('?')[0];
-                if (seenUrls.has(cleanUrl))
+                if (seenUrls.has(cleanUrl)) {
+                    skippedCount++;
                     continue;
+                }
                 seenUrls.add(cleanUrl);
-                listings.push({
+                const listing = {
                     siteKey: config.siteKey,
                     listingId: prop.listingId || prop.url.split('/').pop() || '',
                     title: prop.title,
@@ -193,9 +249,12 @@ export const scrapeC21Sunsets = async (config, filters) => {
                     area: prop.area ? `${prop.area} m²` : undefined,
                     images: prop.images || undefined,
                     badges: prop.badges || undefined,
-                });
+                };
+                listings.push(listing);
                 newCount++;
+                logger.debug({ listing: { title: listing.title, price: listing.priceUSD, url: listing.url } }, "Propiedad agregada");
             }
+            logger.info({ newCount, skippedCount, total: listings.length }, "Propiedades extraídas en esta iteración");
             return newCount;
         };
         // Extraer propiedades de la primera página

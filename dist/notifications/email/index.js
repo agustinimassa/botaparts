@@ -1,43 +1,37 @@
 import nodemailer from "nodemailer";
-import { Listing } from "../../models/types.js";
-
-export const sendEmailSummary = async (to: string[], subject: string, listings: Listing[]) => {
-  if (!to.length) return;
-  const transporter = nodemailer.createTransport({
-    host: process.env.SMTP_HOST,
-    port: Number(process.env.SMTP_PORT || 587),
-    secure: false,
-    auth: {
-      user: process.env.SMTP_USER,
-      pass: process.env.SMTP_PASS,
-    },
-  });
-
-  const html = renderHtml(listings);
-  await transporter.sendMail({
-    from: process.env.SMTP_FROM || process.env.SMTP_USER,
-    to,
-    subject,
-    html,
-  });
+export const sendEmailSummary = async (to, subject, listings) => {
+    if (!to.length)
+        return;
+    const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST,
+        port: Number(process.env.SMTP_PORT || 587),
+        secure: false,
+        auth: {
+            user: process.env.SMTP_USER,
+            pass: process.env.SMTP_PASS,
+        },
+    });
+    const html = renderHtml(listings);
+    await transporter.sendMail({
+        from: process.env.SMTP_FROM || process.env.SMTP_USER,
+        to,
+        subject,
+        html,
+    });
 };
-
-const getSiteName = (siteKey: string): string => {
-  const siteNames: Record<string, string> = {
-    remaxrd: "RE/MAX RD",
-    c21sunsets: "Century 21 Sunsets",
-  };
-  return siteNames[siteKey.toLowerCase()] || siteKey.toUpperCase();
+const getSiteName = (siteKey) => {
+    const siteNames = {
+        remaxrd: "RE/MAX RD",
+        c21sunsets: "Century 21 Sunsets",
+    };
+    return siteNames[siteKey.toLowerCase()] || siteKey.toUpperCase();
 };
-
-export const renderHtml = (listings: Listing[]): string => {
-  const cards = listings
-    .map(
-      (l) => {
+export const renderHtml = (listings) => {
+    const cards = listings
+        .map((l) => {
         const siteName = getSiteName(l.siteKey);
         const mainImage = l.images && l.images.length > 0 ? l.images[0] : null;
         const additionalImages = l.images && l.images.length > 1 ? l.images.slice(1, 4) : [];
-        
         return `
       <div style="border: 1px solid #e0e0e0; padding: 0; margin-bottom: 20px; border-radius: 8px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden;">
         ${mainImage ? `
@@ -70,10 +64,9 @@ export const renderHtml = (listings: Listing[]): string => {
           <a href="${l.url}" style="display: inline-block; margin-top: 12px; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold;">Ver detalle →</a>
         </div>
       </div>`;
-      },
-    )
-    .join("");
-  return `
+    })
+        .join("");
+    return `
     <!DOCTYPE html>
     <html>
       <head>
@@ -90,15 +83,13 @@ export const renderHtml = (listings: Listing[]): string => {
     </html>
   `;
 };
-
-const escapeHtml = (text: string): string => {
-  const map: Record<string, string> = {
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#039;",
-  };
-  return text.replace(/[&<>"']/g, (m) => map[m]);
+const escapeHtml = (text) => {
+    const map = {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#039;",
+    };
+    return text.replace(/[&<>"']/g, (m) => map[m]);
 };
-

@@ -10,6 +10,7 @@ export type Listing = {
   baths?: number;
   area?: string;
   description?: string;
+  badges?: string[]; // Badges o destaques como "Nuevo listado", "Oportunidad", etc.
   rawData?: Record<string, unknown>;
 };
 

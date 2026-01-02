@@ -25,6 +25,9 @@ Crea un archivo `.env` en la raíz del proyecto basándote en `env.example`. Las
 ### Variables Generales
 - `PORT` (opcional, default: `3000`): Puerto donde escucha el servidor API
 - `LOG_LEVEL` (opcional, default: `info`): Nivel de logging (`trace`, `debug`, `info`, `warn`, `error`, `fatal`)
+- `PLAYWRIGHT_HEADLESS` (opcional, default: `true`): Modo headless de Playwright
+  - `true` = navegador sin interfaz gráfica (más rápido, recomendado para producción)
+  - `false` = navegador visible (útil para debugging y desarrollo)
 
 ### Variables SMTP (requeridas para emails)
 - `SMTP_HOST` (requerido): Host del servidor SMTP

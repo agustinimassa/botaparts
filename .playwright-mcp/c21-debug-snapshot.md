@@ -1,0 +1,331 @@
+### Page state
+- Page URL: https://c21sunsets.com/es/s/bayahibe-la-altagracia
+- Page Title: Las 12 mejores Propiedades de República Dominicana
+- Page Snapshot:
+```yaml
+- generic [active] [ref=e1]:
+  - link "Back to Top":
+    - /url: "#"
+    - generic [ref=e2] [cursor=pointer]: Back to Top
+  - banner [ref=e3]:
+    - navigation [ref=e4]:
+      - link "DominicusSunsets" [ref=e6] [cursor=pointer]:
+        - /url: /es/
+        - img [ref=e7]
+        - generic [ref=e18]: DominicusSunsets
+      - button "Search" [ref=e21] [cursor=pointer]:
+        - img [ref=e22]
+        - generic [ref=e24]: Buscar...
+      - link:
+        - /url: /en/s/bayahibe-la-altagracia/
+      - link "View favorites" [ref=e25] [cursor=pointer]:
+        - /url: /es/f/
+        - generic [ref=e26]:
+          - generic [ref=e27]: "0"
+          - img [ref=e28]
+      - button "Toggle navigation" [ref=e30] [cursor=pointer]:
+        - img [ref=e31]
+        - generic [ref=e33]: Menú Principal
+  - navigation "breadcrumb" [ref=e34]:
+    - link "Home" [ref=e36] [cursor=pointer]:
+      - /url: /es
+      - img [ref=e37]
+      - generic [ref=e39]: Home
+    - generic [ref=e40]: › Bayahibe (La Altagracia)
+  - 'heading ":: Bayahibe (La Altagracia) en República Dominicana" [level=1] [ref=e41]'
+  - generic [ref=e42]:
+    - text: Encontradas 32 propiedades que coinciden con "
+    - generic [ref=e43]: Residencial
+    - text: "y"
+    - generic [ref=e44]: Bayahibe (La Altagracia)
+    - text: "\"."
+  - generic [ref=e45]:
+    - navigation [ref=e46]:
+      - button "Filtrar" [ref=e47] [cursor=pointer]:
+        - img [ref=e48]
+        - text: Filtrar
+        - img [ref=e51]
+    - generic [ref=e53]:
+      - generic [ref=e54]:
+        - generic [ref=e55]: 32 propiedades · 3 Páginas
+        - toolbar "Moneda" [ref=e57]:
+          - img [ref=e60]
+          - combobox "Moneda" [ref=e62]:
+            - option "-$-" [selected]
+            - option "USD"
+            - option "DOP"
+        - toolbar "Orden" [ref=e64]:
+          - img [ref=e67]
+          - combobox "Orden" [ref=e69]:
+            - option "Precio Alto-Bajo" [selected]
+            - option "Precio Bajo-Alto"
+            - option "Nuevo Primero"
+            - option "Nuevo Pasado"
+      - generic [ref=e70]:
+        - article [ref=e71]:
+          - button "Exclusive Villa In Tracadero – Luxury, Privacy & Sustainability Casas Unifamiliares En Venta Bayahibe (La Altagracia) Agregar a los favoritos Exclusive Villa In Tracadero – Luxury, Privacy & Sustainability Casas Unifamiliares En Venta Bayahibe (La Altagracia)" [ref=e72] [cursor=pointer]:
+            - button "Exclusive Villa In Tracadero – Luxury, Privacy & Sustainability Casas Unifamiliares En Venta Bayahibe (La Altagracia) Agregar a los favoritos" [ref=e73]:
+              - img [ref=e74]
+            - img "Exclusive Villa In Tracadero – Luxury, Privacy & Sustainability Casas Unifamiliares En Venta Bayahibe (La Altagracia)" [ref=e76]
+          - generic [ref=e77]: Consultar Precio
+          - button "Exclusive Villa In Tracadero – Luxury, Privacy & Sustainability Bayahibe (La Altagracia) Casas Unifamiliares 3 · 4 · Vista de la Piscina · 826 m² 1/32" [ref=e78] [cursor=pointer]:
+            - heading "Exclusive Villa In Tracadero – Luxury, Privacy & Sustainability Bayahibe (La Altagracia) Casas Unifamiliares" [level=2] [ref=e79]:
+              - generic [ref=e80]: Exclusive Villa In Tracadero – Luxury, Privacy & Sustainability
+              - strong [ref=e82]: Bayahibe (La Altagracia)
+              - generic [ref=e83]: Casas Unifamiliares
+            - generic [ref=e84]:
+              - img [ref=e85]
+              - text: 3 ·
+              - img [ref=e87]
+              - text: 4 · Vista de la Piscina · 826 m²
+            - emphasis [ref=e90]: 1/32
+        - article [ref=e91]:
+          - button "Villa Grande En El Corazon De Dominicus Casas Unifamiliares En Venta Bayahibe (La Altagracia) Agregar a los favoritos Villa Grande En El Corazon De Dominicus Casas Unifamiliares En Venta Bayahibe (La Altagracia)" [ref=e92] [cursor=pointer]:
+            - button "Villa Grande En El Corazon De Dominicus Casas Unifamiliares En Venta Bayahibe (La Altagracia) Agregar a los favoritos" [ref=e93]:
+              - img [ref=e94]
+            - img "Villa Grande En El Corazon De Dominicus Casas Unifamiliares En Venta Bayahibe (La Altagracia)" [ref=e96]
+          - generic [ref=e97]: US$ 799,000
+          - button "Villa Grande En El Corazon De Dominicus Bayahibe (La Altagracia) Casas Unifamiliares 3 · 3 · Vista del Jardín · 550 m² 2/32" [ref=e98] [cursor=pointer]:
+            - heading "Villa Grande En El Corazon De Dominicus Bayahibe (La Altagracia) Casas Unifamiliares" [level=2] [ref=e99]:
+              - generic [ref=e100]: Villa Grande En El Corazon De Dominicus
+              - strong [ref=e102]: Bayahibe (La Altagracia)
+              - generic [ref=e103]: Casas Unifamiliares
+            - generic [ref=e104]:
+              - img [ref=e105]
+              - text: 3 ·
+              - img [ref=e107]
+              - text: 3 · Vista del Jardín · 550 m²
+            - emphasis [ref=e110]: 2/32
+        - article [ref=e111]:
+          - button "Elegant Penthouse Fully Furnished Near The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos Elegant Penthouse Fully Furnished Near The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e112] [cursor=pointer]:
+            - button "Elegant Penthouse Fully Furnished Near The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos" [ref=e113]:
+              - img [ref=e114]
+            - img "Elegant Penthouse Fully Furnished Near The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e116]
+          - generic [ref=e117]: US$ 499,000
+          - button "Elegant Penthouse Fully Furnished Near The Beach Bayahibe (La Altagracia) Condominio / Apartamento 4 · 4½ · Vista al océano · 229 m² 3/32" [ref=e118] [cursor=pointer]:
+            - heading "Elegant Penthouse Fully Furnished Near The Beach Bayahibe (La Altagracia) Condominio / Apartamento" [level=2] [ref=e119]:
+              - generic [ref=e120]: Elegant Penthouse Fully Furnished Near The Beach
+              - strong [ref=e122]: Bayahibe (La Altagracia)
+              - generic [ref=e123]: Condominio / Apartamento
+            - generic [ref=e124]:
+              - img [ref=e125]
+              - text: 4 ·
+              - img [ref=e127]
+              - text: 4½ · Vista al océano · 229 m²
+            - emphasis [ref=e130]: 3/32
+        - article [ref=e131]:
+          - button "Beach Front Condos Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos Beach Front Condos Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e132] [cursor=pointer]:
+            - button "Beach Front Condos Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos" [ref=e133]:
+              - img [ref=e134]
+            - img "Beach Front Condos Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e136]
+          - generic [ref=e137]: US$ 399,000
+          - button "Beach Front Condos Bayahibe (La Altagracia) Condominio / Apartamento 2 · 2 · Vista del Jardín 4/32" [ref=e138] [cursor=pointer]:
+            - heading "Beach Front Condos Bayahibe (La Altagracia) Condominio / Apartamento" [level=2] [ref=e139]:
+              - generic [ref=e140]: Beach Front Condos
+              - strong [ref=e142]: Bayahibe (La Altagracia)
+              - generic [ref=e143]: Condominio / Apartamento
+            - generic [ref=e144]:
+              - img [ref=e145]
+              - text: 2 ·
+              - img [ref=e147]
+              - text: 2 · Vista del Jardín
+            - emphasis [ref=e150]: 4/32
+        - article [ref=e151]:
+          - button "Apartamento De 2 Hab. Cerca De La Playa Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos Apartamento De 2 Hab. Cerca De La Playa Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e152] [cursor=pointer]:
+            - button "Apartamento De 2 Hab. Cerca De La Playa Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos" [ref=e153]:
+              - img [ref=e154]
+            - img "Apartamento De 2 Hab. Cerca De La Playa Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e156]
+          - generic [ref=e157]: US$ 285,000
+          - button "Apartamento De 2 Hab. Cerca De La Playa Bayahibe (La Altagracia) Condominio / Apartamento 2 · 2 · Vista de la Piscina 5/32" [ref=e158] [cursor=pointer]:
+            - heading "Apartamento De 2 Hab. Cerca De La Playa Bayahibe (La Altagracia) Condominio / Apartamento" [level=2] [ref=e159]:
+              - generic [ref=e160]: Apartamento De 2 Hab. Cerca De La Playa
+              - strong [ref=e162]: Bayahibe (La Altagracia)
+              - generic [ref=e163]: Condominio / Apartamento
+            - generic [ref=e164]:
+              - img [ref=e165]
+              - text: 2 ·
+              - img [ref=e167]
+              - text: 2 · Vista de la Piscina
+            - emphasis [ref=e170]: 5/32
+        - article [ref=e171]:
+          - button "Pent House Close To Dominicus Bayahibe Beach Atic Style Casas Unifamiliares En Venta Bayahibe (La Altagracia) Agregar a los favoritos Pent House Close To Dominicus Bayahibe Beach Atic Style Casas Unifamiliares En Venta Bayahibe (La Altagracia)" [ref=e172] [cursor=pointer]:
+            - button "Pent House Close To Dominicus Bayahibe Beach Atic Style Casas Unifamiliares En Venta Bayahibe (La Altagracia) Agregar a los favoritos" [ref=e173]:
+              - img [ref=e174]
+            - img "Pent House Close To Dominicus Bayahibe Beach Atic Style Casas Unifamiliares En Venta Bayahibe (La Altagracia)" [ref=e176]
+          - generic [ref=e177]: US$ 275,000
+          - button "Pent House Close To Dominicus Bayahibe Beach Atic Style Bayahibe (La Altagracia) Casas Unifamiliares 2 · 2 · Vista de la Piscina · 130 m² 6/32" [ref=e178] [cursor=pointer]:
+            - heading "Pent House Close To Dominicus Bayahibe Beach Atic Style Bayahibe (La Altagracia) Casas Unifamiliares" [level=2] [ref=e179]:
+              - generic [ref=e180]: Pent House Close To Dominicus Bayahibe Beach Atic Style
+              - strong [ref=e182]: Bayahibe (La Altagracia)
+              - generic [ref=e183]: Casas Unifamiliares
+            - generic [ref=e184]:
+              - img [ref=e185]
+              - text: 2 ·
+              - img [ref=e187]
+              - text: 2 · Vista de la Piscina · 130 m²
+            - emphasis [ref=e190]: 6/32
+        - article [ref=e191]:
+          - button "Moderno Town House Amueblado Cerca De La Playa Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos Moderno Town House Amueblado Cerca De La Playa Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e192] [cursor=pointer]:
+            - button "Moderno Town House Amueblado Cerca De La Playa Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos" [ref=e193]:
+              - img [ref=e194]
+            - img "Moderno Town House Amueblado Cerca De La Playa Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e196]
+          - generic [ref=e197]: US$ 255,000
+          - button "Moderno Town House Amueblado Cerca De La Playa Bayahibe (La Altagracia) Condominio / Apartamento 3 · 3½ · Vista del Jardín · 153 m² 7/32" [ref=e198] [cursor=pointer]:
+            - heading "Moderno Town House Amueblado Cerca De La Playa Bayahibe (La Altagracia) Condominio / Apartamento" [level=2] [ref=e199]:
+              - generic [ref=e200]: Moderno Town House Amueblado Cerca De La Playa
+              - strong [ref=e202]: Bayahibe (La Altagracia)
+              - generic [ref=e203]: Condominio / Apartamento
+            - generic [ref=e204]:
+              - img [ref=e205]
+              - text: 3 ·
+              - img [ref=e207]
+              - text: 3½ · Vista del Jardín · 153 m²
+            - emphasis [ref=e210]: 7/32
+        - article [ref=e211]:
+          - button "Elegant Apartment Fully Furnished Near The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos Elegant Apartment Fully Furnished Near The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e212] [cursor=pointer]:
+            - button "Elegant Apartment Fully Furnished Near The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos" [ref=e213]:
+              - img [ref=e214]
+            - img "Elegant Apartment Fully Furnished Near The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e216]
+          - generic [ref=e217]: US$ 249,000
+          - button "Elegant Apartment Fully Furnished Near The Beach Bayahibe (La Altagracia) Condominio / Apartamento 2 · 2 · Vista de la Piscina · 101 m² 8/32" [ref=e218] [cursor=pointer]:
+            - heading "Elegant Apartment Fully Furnished Near The Beach Bayahibe (La Altagracia) Condominio / Apartamento" [level=2] [ref=e219]:
+              - generic [ref=e220]: Elegant Apartment Fully Furnished Near The Beach
+              - strong [ref=e222]: Bayahibe (La Altagracia)
+              - generic [ref=e223]: Condominio / Apartamento
+            - generic [ref=e224]:
+              - img [ref=e225]
+              - text: 2 ·
+              - img [ref=e227]
+              - text: 2 · Vista de la Piscina · 101 m²
+            - emphasis [ref=e230]: 8/32
+        - article [ref=e231]:
+          - button "Elegant Apartment Fully Furnished Near The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos Elegant Apartment Fully Furnished Near The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e232] [cursor=pointer]:
+            - button "Elegant Apartment Fully Furnished Near The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos" [ref=e233]:
+              - img [ref=e234]
+            - img "Elegant Apartment Fully Furnished Near The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e236]
+          - generic [ref=e237]: US$ 249,000
+          - button "Elegant Apartment Fully Furnished Near The Beach Bayahibe (La Altagracia) Condominio / Apartamento 2 · 2 · Vista de la Piscina · 101 m² 9/32" [ref=e238] [cursor=pointer]:
+            - heading "Elegant Apartment Fully Furnished Near The Beach Bayahibe (La Altagracia) Condominio / Apartamento" [level=2] [ref=e239]:
+              - generic [ref=e240]: Elegant Apartment Fully Furnished Near The Beach
+              - strong [ref=e242]: Bayahibe (La Altagracia)
+              - generic [ref=e243]: Condominio / Apartamento
+            - generic [ref=e244]:
+              - img [ref=e245]
+              - text: 2 ·
+              - img [ref=e247]
+              - text: 2 · Vista de la Piscina · 101 m²
+            - emphasis [ref=e250]: 9/32
+        - article [ref=e251]:
+          - button "Single House In Bayahibe Casas Unifamiliares En Venta Bayahibe (La Altagracia) Agregar a los favoritos Single House In Bayahibe Casas Unifamiliares En Venta Bayahibe (La Altagracia)" [ref=e252] [cursor=pointer]:
+            - button "Single House In Bayahibe Casas Unifamiliares En Venta Bayahibe (La Altagracia) Agregar a los favoritos" [ref=e253]:
+              - img [ref=e254]
+            - img "Single House In Bayahibe Casas Unifamiliares En Venta Bayahibe (La Altagracia)" [ref=e256]
+          - generic [ref=e257]: US$ 230,000
+          - button "Single House In Bayahibe Bayahibe (La Altagracia) Casas Unifamiliares 3 · 2 · Vista al Interior · 252 m² 10/32" [ref=e258] [cursor=pointer]:
+            - heading "Single House In Bayahibe Bayahibe (La Altagracia) Casas Unifamiliares" [level=2] [ref=e259]:
+              - generic [ref=e260]: Single House In Bayahibe
+              - strong [ref=e262]: Bayahibe (La Altagracia)
+              - generic [ref=e263]: Casas Unifamiliares
+            - generic [ref=e264]:
+              - img [ref=e265]
+              - text: 3 ·
+              - img [ref=e267]
+              - text: 2 · Vista al Interior · 252 m²
+            - emphasis [ref=e270]: 10/32
+        - article [ref=e271]:
+          - button "Palm Luxury Fully Furnished Closed To The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos Palm Luxury Fully Furnished Closed To The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e272] [cursor=pointer]:
+            - button "Palm Luxury Fully Furnished Closed To The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos" [ref=e273]:
+              - img [ref=e274]
+            - img "Palm Luxury Fully Furnished Closed To The Beach Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e276]
+          - generic [ref=e277]: US$ 178,500
+          - button "Palm Luxury Fully Furnished Closed To The Beach Bayahibe (La Altagracia) Condominio / Apartamento 2 · 2 · Vista de la Piscina · 13,000 m² 11/32" [ref=e278] [cursor=pointer]:
+            - heading "Palm Luxury Fully Furnished Closed To The Beach Bayahibe (La Altagracia) Condominio / Apartamento" [level=2] [ref=e279]:
+              - generic [ref=e280]: Palm Luxury Fully Furnished Closed To The Beach
+              - strong [ref=e282]: Bayahibe (La Altagracia)
+              - generic [ref=e283]: Condominio / Apartamento
+            - generic [ref=e284]:
+              - img [ref=e285]
+              - text: 2 ·
+              - img [ref=e287]
+              - text: 2 · Vista de la Piscina · 13,000 m²
+            - emphasis [ref=e290]: 11/32
+        - article [ref=e291]:
+          - button "Espaciosos Aticos En Plano Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos Espaciosos Aticos En Plano Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e292] [cursor=pointer]:
+            - button "Espaciosos Aticos En Plano Condominio / Apartamento En Venta Bayahibe (La Altagracia) Agregar a los favoritos" [ref=e293]:
+              - img [ref=e294]
+            - img "Espaciosos Aticos En Plano Condominio / Apartamento En Venta Bayahibe (La Altagracia)" [ref=e296]
+          - generic [ref=e297]: US$ 172,950
+          - button "Espaciosos Aticos En Plano Bayahibe (La Altagracia) Condominio / Apartamento 2 · 2 · Vista del Jardín · 2,100 m² 12/32" [ref=e298] [cursor=pointer]:
+            - heading "Espaciosos Aticos En Plano Bayahibe (La Altagracia) Condominio / Apartamento" [level=2] [ref=e299]:
+              - generic [ref=e300]: Espaciosos Aticos En Plano
+              - strong [ref=e302]: Bayahibe (La Altagracia)
+              - generic [ref=e303]: Condominio / Apartamento
+            - generic [ref=e304]:
+              - img [ref=e305]
+              - text: 2 ·
+              - img [ref=e307]
+              - text: 2 · Vista del Jardín · 2,100 m²
+            - emphasis [ref=e310]: 12/32
+        - generic [ref=e311]: Show more...
+  - emphasis [ref=e313]: (¹) La cantidad listada se convirtió en base a los tipos de cambio interbancarios recientes. No garantizamos la exactitud de estas cantidades.
+  - contentinfo [ref=e314]:
+    - generic [ref=e315]:
+      - generic [ref=e317]:
+        - generic [ref=e318]:
+          - img [ref=e320]
+          - generic [ref=e331]: DominicusSunsets
+        - generic [ref=e334]:
+          - generic [ref=e335]:
+            - img [ref=e336]
+            - text: Dominican Republic
+          - paragraph [ref=e339]:
+            - generic [ref=e340]: CENTURY 21 Dominicus Sunsets
+            - generic [ref=e341]: Edificio Laguna, Av. Laguna
+            - generic [ref=e342]: "Dominicus Bayahibe. CP/ZIP: 23000"
+            - text: República Dominicana
+          - generic [ref=e343]:
+            - paragraph
+      - generic [ref=e345]:
+        - paragraph
+        - navigation [ref=e346]:
+          - img [ref=e348]
+          - menu [ref=e350]:
+            - img [ref=e351]
+            - menuitem "Información General" [ref=e353] [cursor=pointer]
+            - img [ref=e354]
+            - menuitem "Oportunidades de franquicia" [ref=e356] [cursor=pointer]
+            - img [ref=e357]
+            - menuitem "Oficinas Regionales" [ref=e359] [cursor=pointer]
+            - img [ref=e360]
+            - menuitem "Sitios Internacionales" [ref=e362] [cursor=pointer]
+            - img [ref=e363]
+            - menuitem "Casas & Villas lujosas" [ref=e365] [cursor=pointer]
+            - img [ref=e366]
+            - menuitem "Carreras y oportunidades" [ref=e368] [cursor=pointer]
+        - list
+      - generic [ref=e370]:
+        - generic [ref=e373]:
+          - generic [ref=e374]:
+            - link "hola@c21sunsets.com" [ref=e377] [cursor=pointer]:
+              - /url: mailto:hola@c21sunsets.com
+            - link "+1-849-449-0596" [ref=e380] [cursor=pointer]:
+              - /url: tel:+18494490596
+          - paragraph
+        - paragraph
+        - list [ref=e381]:
+          - link [ref=e382] [cursor=pointer]:
+            - /url: https://api.whatsapp.com/send/?phone=18494490596&text&type=phone_number&app_absent=0
+          - link [ref=e384] [cursor=pointer]:
+            - /url: https://www.instagram.com/c21sunsets/
+      - generic [ref=e386]:
+        - generic:
+          - list
+    - generic [ref=e387]:
+      - text: Century 21 del Caribe, Bermudas y Bahamas · 2026 © Reservados todos los derechos · CENTURY 21® y el logotipo de CENTURY 21 son marcas de servicio registradas propiedad de Century 21 Real Estate LLC · Cada oficina es de propiedad y operación independientes · La información de la lista se considera confiable, pero no se garantiza que sea precisa. [
+      - link "Política de privacidad" [ref=e388] [cursor=pointer]:
+        - /url: /es/politica-de-privacidad/
+      - text: ·
+      - link "Política de cookies" [ref=e389] [cursor=pointer]:
+        - /url: /es/politica-de-cookies/
+      - text: "]"
+```

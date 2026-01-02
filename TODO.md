@@ -8,9 +8,14 @@
 - [ ] Crear Excel de ejemplo en `storage/config.xlsx` con hojas (`sources`, `filters`, `notifications`, `sent`, opcional `schedules`)
 
 ## Desarrollo de scrapers
-- [ ] Ajustar selectores reales de RE/MAX RD en `src/scrapers/remaxrd.ts`
-- [ ] Ajustar selectores reales de C21 Sunsets en `src/scrapers/c21sunsets.ts`
-- [ ] Probar scraping de cada sitio individualmente
+- [x] Ajustar selectores reales de RE/MAX RD en `src/scrapers/remaxrd.ts`
+- [x] Ajustar selectores reales de C21 Sunsets en `src/scrapers/c21sunsets.ts`
+- [x] Implementar paginación con scroll infinito en RE/MAX RD (máximo 5 páginas)
+- [x] Implementar paginación con botón "Show more" en C21 Sunsets (máximo 5 páginas)
+- [x] Agregar deduplicación dentro de los scrapers para evitar propiedades duplicadas
+- [x] Mejorar manejo de errores para evitar fallos en la búsqueda de propiedades
+- [x] Extraer imágenes de las propiedades en ambos scrapers
+- [ ] Probar scraping de cada sitio individualmente con paginación completa
 
 ## Configuración de notificaciones
 - [ ] Configurar credenciales SMTP en `.env` (SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM)

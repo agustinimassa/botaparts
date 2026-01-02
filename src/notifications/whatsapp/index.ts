@@ -23,8 +23,11 @@ const renderWhatsapp = (listings: Listing[]): string => {
     .map(
       (l) => {
         const siteName = getSiteName(l.siteKey);
+        const badgesText = l.badges && l.badges.length > 0 
+          ? `\n✨ ${l.badges.join(' • ')}` 
+          : '';
         const details = [
-          `🏠 ${l.title}`,
+          `🏠 ${l.title}${badgesText}`,
           `📌 Fuente: ${siteName}`,
           `💲 ${l.priceUSD ? `$${l.priceUSD.toLocaleString()}` : "Consultar"} USD`,
           l.location ? `📍 ${l.location}` : null,

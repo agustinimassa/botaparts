@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-01-02T04:06:55.868Z",
+  "timestamp": "2026-01-02T04:18:14.198Z",
   "remaxrd": {
-    "count": 16,
+    "count": 64,
     "listings": [
       {
         "siteKey": "remaxrd",
@@ -12,7 +12,10 @@
         "location": "DOMINICUS, BAYAHIBE",
         "beds": 1,
         "baths": 1,
-        "area": "62.80 m²"
+        "area": "62.80 m²",
+        "images": [
+          "https://images.remaxrd.com/media/pictures/watermark/small/D-2745-1766424388-eaccd3ce-a28b-47bf-b637-9d0db9a8cbcf.webp"
+        ]
       },
       {
         "siteKey": "remaxrd",
@@ -23,7 +26,10 @@
         "location": "CENTRO PUEBLO, BAYAHIBE",
         "beds": 1,
         "baths": 1,
-        "area": "51.51 m²"
+        "area": "51.51 m²",
+        "images": [
+          "https://images.remaxrd.com/media/pictures/watermark/small/D-2392-1764611103-8d08280a-5912-4dc7-ab09-fc84088d5fcc.jpg"
+        ]
       },
       {
         "siteKey": "remaxrd",
@@ -34,7 +40,10 @@
         "location": "DOMINICUS, BAYAHIBE",
         "beds": 2,
         "baths": 2,
-        "area": "173.89 m²"
+        "area": "173.89 m²",
+        "images": [
+          "https://images.remaxrd.com/media/pictures/watermark/small/R-214276-1764955586-2b29d544-838c-43fd-a390-365d9d20767f.webp"
+        ]
       }
     ]
   },

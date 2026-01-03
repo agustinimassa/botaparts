@@ -1,6 +1,39 @@
 {
-  "timestamp": "2026-01-02T14:55:11.654Z",
+  "timestamp": "2026-01-02T19:46:44.952Z",
   "listings": [
+    {
+      "siteKey": "remaxrd",
+      "listingId": "214276",
+      "title": "Penthouse Lujo Jacuzzi Cerca Playa Dominicus",
+      "url": "https://remaxrd.com/propiedad/apartamento/penthouse-de-lujo-con-jacuzzi-cerca-de-playa-dominicus-214276?city=bayahibe",
+      "priceUSD": 355000,
+      "location": "DOMINICUS, BAYAHIBE",
+      "beds": 2,
+      "baths": 2,
+      "area": "173.89 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/R-214276-1764955586-2b29d544-838c-43fd-a390-365d9d20767f.webp"
+      ],
+      "badges": [
+        "Exclusivo"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "215198",
+      "title": "Apartamento Hab Cocotal Golf Country Club",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-de-2-hab-en-cocotal-golf-country-club-215198?city=bavaro",
+      "priceUSD": 200000,
+      "beds": 2,
+      "baths": 2,
+      "area": "110.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/D-2254-1763756297-8d4a9d40-f6bf-477a-afc0-d2463bd756f7.jpg"
+      ],
+      "badges": [
+        "Exclusivo"
+      ]
+    },
     {
       "siteKey": "remaxrd",
       "listingId": "214560",
@@ -35,6 +68,54 @@
     },
     {
       "siteKey": "remaxrd",
+      "listingId": "213596",
+      "title": "Apartamento Amueblado Bavaro 213596",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-amueblado-en-bavaro-213596?city=bavaro",
+      "priceUSD": 169000,
+      "beds": 3,
+      "baths": 3,
+      "area": "150.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/R-213596-1760127143-9d97e545-9a5a-45df-8af6-ec39ba2cd9f7.jpg"
+      ],
+      "badges": [
+        "Exclusivo"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "210965",
+      "title": "Hermoso Apartamento Vistas Espectaculares 210965",
+      "url": "https://remaxrd.com/propiedad/apartamento/hermoso-apartamento-vistas-espectaculares-210965?city=bavaro",
+      "priceUSD": 285000,
+      "beds": 2,
+      "baths": 2,
+      "area": "106.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13975-1756150824-0866fa46b8151718b9820d6ed1b4f985.webp"
+      ],
+      "badges": [
+        "Exclusivo"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "210812",
+      "title": "Apartamento Estrenar Reserva Real Cocotal 210812",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-a-estrenar-en-reserva-real-cocotal-210812?city=bavaro",
+      "priceUSD": 350000,
+      "beds": 2,
+      "baths": 2,
+      "area": "123.20 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13521-1755576682-bfa2236a5af2550a3bcb50b76b0b9321.webp"
+      ],
+      "badges": [
+        "Exclusivo"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
       "listingId": "185602",
       "title": "Apartamento Nuevo Venta Dormitorios Punta Cana",
       "url": "https://remaxrd.com/propiedad/apartamento/apartamento-nuevo-en-venta-2-dormitorios-en-punta-cana-185602?city=bavaro",
@@ -47,6 +128,78 @@
       ],
       "badges": [
         "Exclusivo"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "176581",
+      "title": "Proyecto de Apartamento",
+      "url": "https://remaxrd.com/propiedad/proyecto-de-apartamento/proyecto-residencial-gold-reef-ii-176581?city=bavaro",
+      "priceUSD": 174900,
+      "beds": 48,
+      "baths": 96,
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/14086-1687286127-7b6aa4ad5db5b166a0421a49760e0846.jpg"
+      ],
+      "badges": [
+        "Exclusivo"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "169421",
+      "title": "Apartamento Veron Higuey 169421",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-veron-higuey-169421?city=hig%C3%BCey",
+      "priceUSD": 175000,
+      "beds": 2,
+      "baths": 2,
+      "area": "90.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13806-1698247221-5fe30e0b2081aa0338dfd2dc1085b671.jpg"
+      ],
+      "badges": [
+        "Exclusivo"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "209857",
+      "title": "Apartamento Bayahibe Dominicus 209857",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-bayahibe-dominicus-209857?city=bayahibe",
+      "priceUSD": 212700,
+      "location": "DOMINICUS, BAYAHIBE",
+      "beds": 2,
+      "baths": 2,
+      "area": "98.50 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/14760-1753492898-93b71a48a554e54010de7f2b04994fee.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "199465",
+      "title": "Hogar Sonado Playa Dominicus Bayahibe 199465",
+      "url": "https://remaxrd.com/propiedad/apartamento/tu-hogar-sonado-en-la-playa-dominicus-bayahibe-199465?city=bayahibe",
+      "priceUSD": 285000,
+      "location": "DOMINICUS, BAYAHIBE",
+      "beds": 2,
+      "baths": 2,
+      "area": "85.45 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/14540-1732729222-0591a29f8fc9c3bb6afebacdd8ffa8c2.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "216001",
+      "title": "Apartamento Los Corales 216001",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-los-corales-216001?city=bavaro",
+      "priceUSD": 498000,
+      "beds": 3,
+      "baths": 3,
+      "area": "165.85 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/D-2655-1765988233-70f6202f-022b-4076-8a7f-691484c39427.webp"
       ]
     },
     {
@@ -64,6 +217,58 @@
     },
     {
       "siteKey": "remaxrd",
+      "listingId": "213870",
+      "title": "Proyecto Apartamento Los Corales 213870",
+      "url": "https://remaxrd.com/propiedad/apartamento/proyecto-de-apartamento-en-los-corales-213870?city=bavaro",
+      "priceUSD": 339000,
+      "beds": 2,
+      "baths": 2,
+      "area": "113.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/D-1537-1760630095-5a1cda61-9fec-44af-a795-b963334e58ac.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "212149",
+      "title": "Moderno Apartamento Dormitorios Cortecito Bavaro 212149",
+      "url": "https://remaxrd.com/propiedad/apartamento/moderno-apartamento-de-2-dormitorios-el-cortecito-bavaro-212149?city=bavaro",
+      "priceUSD": 230000,
+      "beds": 2,
+      "baths": 2,
+      "area": "104.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/D-1029-1758910969-048647fb-dd21-4a46-8757-f44f39fc0cfa.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "210502",
+      "title": "Apartamento Habitaciones Cocotal Golf Country Club",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-de-2-habitaciones-en-cocotal-golf--country-club-210502?city=bavaro",
+      "priceUSD": 350000,
+      "beds": 2,
+      "baths": 2,
+      "area": "138.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/14894-1754891133-2c1307eead17ebbee8ce4f6ee91db7d0.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "205746",
+      "title": "Apartamento Cocotal Golf Country Club 205746",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-cocotal-golf-country-club-205746?city=bavaro",
+      "priceUSD": 315000,
+      "beds": 2,
+      "baths": 2,
+      "area": "107.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13822-1745790584-de2bd6205d270e09a692d5a78a5fb08c.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
       "listingId": "192065",
       "title": "Nuevo Apartamento Dormitorios Zona Turistica 192065",
       "url": "https://remaxrd.com/propiedad/apartamento/nuevo-apartamento-de-2-dormitorios-en-zona-turistica-192065?city=bavaro",
@@ -73,6 +278,89 @@
       "area": "68.00 m²",
       "images": [
         "https://images.remaxrd.com/media/pictures/watermark/small/13822-1719613664-e8f69386d7e566293e43c0865f2be37a.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "180742",
+      "title": "Proyecto de Apartamento",
+      "url": "https://remaxrd.com/propiedad/proyecto-de-apartamento/apartamento-en-bavaro-el-cortecito-180742?city=bavaro",
+      "priceUSD": 210292,
+      "beds": 2,
+      "baths": 2,
+      "area": "112.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13822-1706801738-37cd96715a46d600329d2c7b866a9557.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "216293",
+      "title": "Apartamento Moderno Habitaciones Frente Mar Bayahibe",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-moderno-de-2-habitaciones-frente-al-mar-bayahibe-216293?city=bayahibe",
+      "priceUSD": 379000,
+      "location": "BAYAHIBE, BAYAHIBE",
+      "beds": 2,
+      "baths": 2,
+      "area": "131.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/D-1992-1766871163-15d0164e-0c8e-4f79-9e12-c9344710f652.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "211167",
+      "title": "Apartamento 2hab 10min Playa Vive Renta",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-2hab-a-10min-de-la-playa--vive-renta-211167?city=bayahibe",
+      "priceUSD": 189000,
+      "location": "DOMINICUS, BAYAHIBE",
+      "beds": 2,
+      "baths": 2,
+      "area": "97.50 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/14760-1756669871-52627e9c68506591cd949494267dd292.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "207028",
+      "title": "Apartamento Bayahibe Dominicus 207028",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-bayahibe-dominicus-207028?city=bayahibe",
+      "priceUSD": 265000,
+      "location": "DOMINICUS, BAYAHIBE",
+      "beds": 2,
+      "baths": 2,
+      "area": "120.80 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/14760-1748287062-0c1f60a976f772d2bd53d1dbfae4f51f.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "206382",
+      "title": "Apartamento Bayahibe Dominicus 206382",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-bayahibe-dominicus-206382?city=bayahibe",
+      "priceUSD": 215000,
+      "location": "DOMINICUS, BAYAHIBE",
+      "beds": 2,
+      "baths": 2,
+      "area": "111.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/14760-1746890168-6d024d0fb16c6e2b01c44037372f6fd0.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "197340",
+      "title": "Apartamento Bayahibe Piscina Jacuzzi 197340",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-bayahibe-con-piscina-y-jacuzzi-197340?city=bayahibe",
+      "priceUSD": 280000,
+      "location": "DOMINICUS, BAYAHIBE",
+      "beds": 2,
+      "baths": 2,
+      "area": "85.45 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13355-1742388824-228e679ef5c87b64a4acf3410e335e5c.jpg"
       ]
     },
     {
@@ -91,28 +379,41 @@
     },
     {
       "siteKey": "remaxrd",
-      "listingId": "211165",
-      "title": "Apartamento Venta White Sands Bavaro 211165",
-      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-venta-en-white-sands-bavaro-211165?city=bavaro",
-      "priceUSD": 150000,
+      "listingId": "186160",
+      "title": "Exclusivo Residencial Que Ofrece Acceso Una",
+      "url": "https://remaxrd.com/propiedad/apartamento/exclusivo-residencial-que-ofrece-acceso-a-una-playa-privada-186160?city=la-romana",
+      "priceUSD": 378000,
       "beds": 2,
       "baths": 2,
-      "area": "98.00 m²",
+      "area": "87.98 m²",
       "images": [
-        "https://images.remaxrd.com/media/pictures/watermark/small/13179-1756598359-c1f5d28a79806be08581dd5ebbe9e2eb.png"
+        "https://images.remaxrd.com/media/pictures/watermark/small/14168-1709840671-99998d1328fe8b22f45e72de7621c593.jpg"
       ]
     },
     {
       "siteKey": "remaxrd",
-      "listingId": "210849",
-      "title": "Descubre Este Hermoso Apartamento Pasos Playa",
-      "url": "https://remaxrd.com/propiedad/apartamento/descubre-este-hermoso-apartamento-a-pasos-de-la-playa-210849?city=bavaro",
-      "priceUSD": 150000,
+      "listingId": "215908",
+      "title": "Apartamento Totalmente Amueblada Residencial Cerrado 215908",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-totalmente-amueblada-en-residencial-cerrado-215908?city=bavaro",
+      "priceUSD": 200000,
       "beds": 2,
       "baths": 2,
-      "area": "85.78 m²",
+      "area": "187.41 m²",
       "images": [
-        "https://images.remaxrd.com/media/pictures/watermark/small/12919-1755789085-f930eab426ab196050bc5bf6f8750010.webp"
+        "https://images.remaxrd.com/media/pictures/watermark/small/D-2598-1765631287-508873e2-bf05-46d0-b5a4-94e49c172013.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "215640",
+      "title": "Penthouse Elegante Moderno Playa Los Corales",
+      "url": "https://remaxrd.com/propiedad/apartamento/penthouse-elegante-y-moderno-en-la-playa-los-corales-215640?city=bavaro",
+      "priceUSD": 465000,
+      "beds": 3,
+      "baths": 3,
+      "area": "172.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/D-2460-1764865305-4856cdca-2044-4a9e-96fe-ea13dd4e930a.webp"
       ]
     },
     {
@@ -127,13 +428,151 @@
       "images": [
         "https://c21sunsets.com/images/udx/1159241/w470/1753220249081863.jpg?vno=1753220632"
       ]
+    },
+    {
+      "siteKey": "c21sunsets",
+      "listingId": "1157892",
+      "title": "Elegant Penthouse Fully Furnished Near The Beach",
+      "url": "https://c21sunsets.com/es/d/elegant-penthouse-fully-furnished-near-the-beach-condominio-apartamento-en-venta-bayahibe-la-altagracia-1157892",
+      "priceUSD": 499000,
+      "location": "Bayahibe (La Altagracia)",
+      "beds": 4,
+      "baths": 4.5,
+      "area": "229 m²",
+      "images": [
+        "https://c21sunsets.com/images/udx/1157892/w470/1741643861114405.jpg?vno=1741794004"
+      ]
+    },
+    {
+      "siteKey": "c21sunsets",
+      "listingId": "1154499",
+      "title": "Beach Front Condos",
+      "url": "https://c21sunsets.com/es/d/beach-front-condos-condominio-apartamento-en-venta-bayahibe-la-altagracia-1154499",
+      "priceUSD": 399000,
+      "location": "Bayahibe (La Altagracia)",
+      "beds": 2,
+      "baths": 2,
+      "images": [
+        "https://c21sunsets.com/images/udx/1154499/w470/1723691172547224.jpg?vno=1723691611"
+      ]
+    },
+    {
+      "siteKey": "c21sunsets",
+      "listingId": "1158141",
+      "title": "Apartamento De 2 Hab. Cerca De La Playa",
+      "url": "https://c21sunsets.com/es/d/apartamento-de-2-hab-cerca-de-la-playa-condominio-apartamento-en-venta-bayahibe-la-altagracia-1158141",
+      "priceUSD": 285000,
+      "location": "Bayahibe (La Altagracia)",
+      "beds": 2,
+      "baths": 2,
+      "images": [
+        "https://c21sunsets.com/images/udx/1158141/w470/1743193310941461.jpg?vno=1743195308"
+      ]
+    },
+    {
+      "siteKey": "c21sunsets",
+      "listingId": "1158755",
+      "title": "Pent House Close To Dominicus",
+      "url": "https://c21sunsets.com/es/d/pent-house-close-to-dominicus-bayahibe-beach-atic-style-casas-unifamiliares-en-venta-bayahibe-la-altagracia-1158755",
+      "priceUSD": 275000,
+      "location": "Bayahibe (La Altagracia)",
+      "beds": 2,
+      "baths": 2,
+      "area": "130 m²",
+      "images": [
+        "https://c21sunsets.com/images/udx/1158755/w470/1748375959945825.jpg?vno=1748376010"
+      ]
+    },
+    {
+      "siteKey": "c21sunsets",
+      "listingId": "1156243",
+      "title": "Moderno Town House Amueblado Cerca De La Playa",
+      "url": "https://c21sunsets.com/es/d/moderno-town-house-amueblado-cerca-de-la-playa-condominio-apartamento-en-venta-bayahibe-la-altagracia-1156243",
+      "priceUSD": 255000,
+      "location": "Bayahibe (La Altagracia)",
+      "beds": 3,
+      "baths": 3.5,
+      "area": "153 m²",
+      "images": [
+        "https://c21sunsets.com/images/udx/1156243/w470/1727715294993483.jpg?vno=1727802808"
+      ]
+    },
+    {
+      "siteKey": "c21sunsets",
+      "listingId": "1157494",
+      "title": "Elegant Apartment Fully Furnished Near The Beach",
+      "url": "https://c21sunsets.com/es/d/elegant-apartment-fully-furnished-near-the-beach-condominio-apartamento-en-venta-bayahibe-la-altagracia-1157494",
+      "priceUSD": 249000,
+      "location": "Bayahibe (La Altagracia)",
+      "beds": 2,
+      "baths": 2,
+      "area": "101 m²",
+      "images": [
+        "https://c21sunsets.com/images/udx/1157494/w470/1738692387833727.jpg?vno=1741636773"
+      ]
+    },
+    {
+      "siteKey": "c21sunsets",
+      "listingId": "1157950",
+      "title": "Elegant Apartment Fully Furnished Near The Beach",
+      "url": "https://c21sunsets.com/es/d/elegant-apartment-fully-furnished-near-the-beach-condominio-apartamento-en-venta-bayahibe-la-altagracia-1157950",
+      "priceUSD": 249000,
+      "location": "Bayahibe (La Altagracia)",
+      "beds": 2,
+      "baths": 2,
+      "area": "101 m²",
+      "images": [
+        "https://c21sunsets.com/images/udx/1157950/w470/1741991254150917.jpg?vno=1743197274"
+      ]
+    },
+    {
+      "siteKey": "c21sunsets",
+      "listingId": "1157940",
+      "title": "Single House In",
+      "url": "https://c21sunsets.com/es/d/single-house-in-bayahibe-casas-unifamiliares-en-venta-bayahibe-la-altagracia-1157940",
+      "priceUSD": 230000,
+      "location": "Bayahibe (La Altagracia)",
+      "beds": 3,
+      "baths": 2,
+      "area": "252 m²",
+      "images": [
+        "https://c21sunsets.com/images/udx/1157940/w470/1741907791627724.jpg?vno=1742753622"
+      ]
+    },
+    {
+      "siteKey": "c21sunsets",
+      "listingId": "1154498",
+      "title": "Palm Luxury Fully Furnished Closed To The Beach",
+      "url": "https://c21sunsets.com/es/d/palm-luxury-fully-furnished-closed-to-the-beach-condominio-apartamento-en-venta-bayahibe-la-altagracia-1154498",
+      "priceUSD": 178500,
+      "location": "Bayahibe (La Altagracia)",
+      "beds": 2,
+      "baths": 2,
+      "area": "13000 m²",
+      "images": [
+        "https://c21sunsets.com/images/udx/1154498/w470/1716831458870489.jpg?vno=1716832106"
+      ]
+    },
+    {
+      "siteKey": "c21sunsets",
+      "listingId": "1154389",
+      "title": "Espaciosos Aticos En Plano",
+      "url": "https://c21sunsets.com/es/d/espaciosos-aticos-en-plano-condominio-apartamento-en-venta-bayahibe-la-altagracia-1154389",
+      "priceUSD": 172950,
+      "location": "Bayahibe (La Altagracia)",
+      "beds": 2,
+      "baths": 2,
+      "area": "2100 m²",
+      "images": [
+        "https://c21sunsets.com/images/udx/1154389/w470/1712697503773230.jpg?vno=1755541925"
+      ]
     }
   ],
   "stats": {
-    "total": 9,
+    "total": 40,
     "bySite": {
-      "remaxrd": 8,
-      "c21sunsets": 1
+      "remaxrd": 29,
+      "c21sunsets": 11
     }
   }
 }

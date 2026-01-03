@@ -9,6 +9,7 @@ export type AiMarketAnalysis = {
     string,
     {
       kind: "oportunidad" | "alerta" | "info";
+      score: number; // 0-100 (mayor = mejor oportunidad/encaje)
       label: string;
       tooltip: string;
     }
@@ -140,7 +141,7 @@ export const analyzeMarketWithAi = async (listings: Listing[]): Promise<AiMarket
     "{",
     '  "summary": string,',
     '  "byKey": {',
-    '    "<siteKey>:<listingId>": { "kind": "oportunidad"|"alerta"|"info", "label": string, "tooltip": string }',
+    '    "<siteKey>:<listingId>": { "kind": "oportunidad"|"alerta"|"info", "score": number, "label": string, "tooltip": string }',
     "  }",
     "}",
     "",
@@ -148,6 +149,14 @@ export const analyzeMarketWithAi = async (listings: Listing[]): Promise<AiMarket
     "- oportunidad: bajo USD/m² relativo, buena relación m²/precio, o buena compra potencial dentro de la muestra.",
     "- alerta: USD/m² muy alto relativo, datos sospechosos o incompletos que afectan la interpretación.",
     "- info: comentario neutral útil (por ejemplo, 'USD/m² cercano a la mediana', 'precio competitivo en su zona', etc.).",
+    "",
+    "Regla de score (0-100):",
+    "- 90-100: oportunidad muy fuerte dentro de esta muestra (usd/m² bajo, buena consistencia de datos).",
+    "- 70-89: buena oportunidad.",
+    "- 50-69: neutral/ok.",
+    "- 0-49: alerta o poco atractiva (usd/m² alto o datos incompletos/sospechosos).",
+    "",
+    "IMPORTANTE: el score es RELATIVO a esta muestra (no absoluto del mercado).",
     "",
     "Métricas globales calculadas:",
     JSON.stringify(metrics),
@@ -234,6 +243,17 @@ export const analyzeMarketWithAi = async (listings: Listing[]): Promise<AiMarket
   }
   if (!parsed?.byKey || typeof parsed.byKey !== "object") {
     throw new Error("AI market analysis: 'byKey' inválido");
+  }
+
+  // Normalizar/validar scores
+  for (const [key, v] of Object.entries(parsed.byKey as Record<string, any>)) {
+    if (!v || typeof v !== "object") continue;
+    const s = Number(v.score);
+    (v as any).score = Number.isFinite(s) ? Math.max(0, Math.min(100, Math.round(s))) : 50;
+    if (typeof v.label !== "string") (v as any).label = String(v.label ?? "").slice(0, 60) || "AI";
+    if (typeof v.tooltip !== "string") (v as any).tooltip = String(v.tooltip ?? "");
+    if (v.kind !== "oportunidad" && v.kind !== "alerta" && v.kind !== "info") (v as any).kind = "info";
+    (parsed.byKey as any)[key] = v;
   }
 
   return {

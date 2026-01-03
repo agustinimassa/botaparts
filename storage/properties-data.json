@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-01-03T18:31:15.871Z",
-  "aiSummary": "Análisis del mercado inmobiliario en la región de Punta Cana",
+  "timestamp": "2026-01-03T18:38:50.076Z",
+  "aiSummary": "Análisis del mercado inmobiliario en la región de Punta Cana, con una muestra de 12 propiedades.",
   "listings": [
     {
       "siteKey": "remaxrd",
@@ -19,8 +19,9 @@
       ],
       "ai": {
         "kind": "alerta",
-        "label": "Apartamento Norah Beach",
-        "tooltip": "Precio alto en comparación con la mediana del mercado"
+        "score": 0,
+        "label": "Precio alto y datos incompletos",
+        "tooltip": "USD/m²: 1,780.82, Precio: 130,000 USD, Datos incompletos"
       }
     },
     {
@@ -40,8 +41,9 @@
       ],
       "ai": {
         "kind": "oportunidad",
-        "label": "Apartamento Amueblado Bavaro Condominio Selene",
-        "tooltip": "Precio bajo en comparación con la mediana del mercado"
+        "score": 83,
+        "label": "Buen precio y buena relación m²/precio",
+        "tooltip": "USD/m²: 1,447.97, Precio: 129,000 USD"
       }
     },
     {
@@ -61,8 +63,9 @@
       ],
       "ai": {
         "kind": "info",
-        "label": "Apartamento Nuevo Venta Dormitorios Punta Cana",
-        "tooltip": "Precio competitivo en su zona"
+        "score": 50,
+        "label": "Precio competitivo en su zona",
+        "tooltip": "USD/m²: 1,476.88, Precio: 145,000 USD"
       }
     },
     {
@@ -79,8 +82,9 @@
       ],
       "ai": {
         "kind": "info",
-        "label": "Apartamento Beach Residencesbavaro White Sand",
-        "tooltip": "Precio cercano a la mediana del mercado"
+        "score": 55,
+        "label": "Precio cercano a la mediana",
+        "tooltip": "USD/m²: 1,551.72, Precio: 135,000 USD"
       }
     },
     {
@@ -97,8 +101,9 @@
       ],
       "ai": {
         "kind": "alerta",
-        "label": "Nuevo Apartamento Dormitorios Zona Turistica",
-        "tooltip": "Precio muy alto en comparación con la mediana del mercado"
+        "score": 0,
+        "label": "Precio alto y datos incompletos",
+        "tooltip": "USD/m²: 1,911.76, Precio: 130,000 USD, Datos incompletos"
       }
     },
     {
@@ -116,8 +121,9 @@
       ],
       "ai": {
         "kind": "alerta",
-        "label": "Proyecto de Apartamento",
-        "tooltip": "Precio alto en comparación con la mediana del mercado"
+        "score": 0,
+        "label": "Precio alto y datos incompletos",
+        "tooltip": "USD/m²: 1,641.18, Precio: 139,500 USD, Datos incompletos"
       }
     },
     {
@@ -133,9 +139,10 @@
         "https://images.remaxrd.com/media/pictures/watermark/small/13179-1756598359-c1f5d28a79806be08581dd5ebbe9e2eb.png"
       ],
       "ai": {
-        "kind": "info",
-        "label": "Apartamento Venta White Sands Bavaro",
-        "tooltip": "Precio cercano a la mediana del mercado"
+        "kind": "oportunidad",
+        "score": 92,
+        "label": "Bajo precio y buena relación m²/precio",
+        "tooltip": "USD/m²: 1,530.61, Precio: 150,000 USD"
       }
     },
     {
@@ -152,8 +159,9 @@
       ],
       "ai": {
         "kind": "alerta",
-        "label": "Descubre Este Hermoso Apartamento Pasos Playa",
-        "tooltip": "Precio alto en comparación con la mediana del mercado"
+        "score": 0,
+        "label": "Precio alto y datos incompletos",
+        "tooltip": "USD/m²: 1,748.66, Precio: 150,000 USD, Datos incompletos"
       }
     },
     {
@@ -169,9 +177,10 @@
         "https://images.remaxrd.com/media/pictures/watermark/small/13453-1736977472-d9319ce360129c163b68e6500ed8ab04.jpg"
       ],
       "ai": {
-        "kind": "info",
-        "label": "Apartamento Bavaro Higuey Habitaciones",
-        "tooltip": "Precio cercano a la mediana del mercado"
+        "kind": "oportunidad",
+        "score": 85,
+        "label": "Buen precio y buena relación m²/precio",
+        "tooltip": "USD/m²: 1,449.28, Precio: 103,000 USD"
       }
     },
     {
@@ -188,8 +197,9 @@
       ],
       "ai": {
         "kind": "oportunidad",
-        "label": "Apartamento Residencial Macao",
-        "tooltip": "Precio bajo en comparación con la mediana del mercado"
+        "score": 91,
+        "label": "Bajo precio y buen relación m²/precio",
+        "tooltip": "USD/m²: 791.67, Precio: 95,000 USD"
       }
     },
     {
@@ -205,9 +215,10 @@
         "https://images.remaxrd.com/media/pictures/watermark/small/13428-1679868942-ec81ab4121abcf176f6e7f713edbb29b.jpg"
       ],
       "ai": {
-        "kind": "info",
-        "label": "Proyecto de Apartamento",
-        "tooltip": "Precio competitivo en su zona"
+        "kind": "alerta",
+        "score": 0,
+        "label": "Precio alto y datos incompletos",
+        "tooltip": "USD/m²: 1,271.76, Precio: 160,000 USD, Datos incompletos"
       }
     },
     {
@@ -223,9 +234,10 @@
         "https://c21sunsets.com/images/udx/1159241/w470/1753220249081863.jpg?vno=1753220632"
       ],
       "ai": {
-        "kind": "alerta",
-        "label": "Exclusive Villa In Tracadero",
-        "tooltip": "Falta de información sobre el precio"
+        "kind": "info",
+        "score": 0,
+        "label": "Datos incompletos",
+        "tooltip": "Precio y USD/m² no disponibles"
       }
     }
   ],

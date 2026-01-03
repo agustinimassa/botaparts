@@ -13,6 +13,7 @@ export type Listing = {
   badges?: string[]; // Badges o destaques como "Nuevo listado", "Oportunidad", etc.
   ai?: {
     kind: "oportunidad" | "alerta" | "info";
+    score?: number; // 0-100 (mayor = mejor oportunidad/encaje)
     label: string;
     tooltip: string;
   };

@@ -13,6 +13,7 @@
     "scrape:site": "tsx src/scripts/run-site.ts",
     "ai:analyze": "tsx src/scripts/analyze-departamentos.ts",
     "generate:excel": "tsx src/scripts/generate-example-excel.ts",
+    "build:previews": "tsx src/scripts/build-previews.ts",
     "test:scrapers": "tsx src/scripts/test-scrapers-and-preview.ts",
     "test:scrapers:h": "PLAYWRIGHT_HEADLESS=false tsx src/scripts/test-scrapers-and-preview.ts",
     "test:email": "tsx src/scripts/test-email.ts",

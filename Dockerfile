@@ -5,7 +5,7 @@ WORKDIR /app
 
 # Instalar deps (incluye dev para compilar TS)
 COPY package.json package-lock.json ./
-RUN npm ci --include=dev
+RUN npm ci --include=dev --no-audit --no-fund
 
 # Compilar
 COPY tsconfig.json ./

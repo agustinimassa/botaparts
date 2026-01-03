@@ -1,0 +1,46 @@
+# syntax=docker/dockerfile:1
+#
+# Variante "slim": instala SOLO Chromium (no Firefox/WebKit).
+# Útil si te preocupa el tamaño de la imagen en free tiers.
+#
+
+FROM node:20-bookworm-slim AS build
+
+WORKDIR /app
+
+# Evita que Playwright descargue browsers durante npm ci.
+# Luego instalamos solo Chromium en el stage runtime.
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+
+COPY package.json package-lock.json ./
+RUN npm ci --include=dev --no-audit --no-fund
+
+COPY tsconfig.json ./
+COPY src ./src
+RUN npm run build && npm prune --omit=dev
+
+
+FROM node:20-bookworm-slim AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
+
+COPY --from=build /app/node_modules ./node_modules
+
+# Instala dependencias de sistema para Chromium + descarga Chromium.
+# (No instala Firefox/WebKit.)
+RUN npx playwright install-deps chromium \
+  && npx playwright install chromium \
+  && rm -rf /var/lib/apt/lists/*
+
+COPY --from=build /app/dist ./dist
+
+RUN mkdir -p /app/storage
+
+EXPOSE 3000
+
+CMD ["node", "dist/index.js"]
+
+

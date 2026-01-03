@@ -11,7 +11,7 @@
 - `pino` / `pino-pretty`: logging estructurado y legible en desarrollo.
 - `nodemailer`: envío de correos HTML con resúmenes de propiedades (HTML inline sin dependencias vulnerables).
 - `dotenv`: carga de variables de entorno (.env).
-- `better-sqlite3`: almacenamiento local rápido para deduplicación/registro (`sent`).
+- `storage/sent.json`: almacenamiento local (archivo JSON) para deduplicación/registro (`sent`).
 
 ## Desarrollo
 - `typescript`: tipado estático.

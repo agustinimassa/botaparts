@@ -138,16 +138,16 @@ app.get("/", async (_request, reply) => {
       <div class="wrap">
         <div class="card">
           <h1>🏠 Bothouse</h1>
-          <p>Este panel actualiza las propiedades (scraping) y genera dos vistas:</p>
+          <p>Este panel sirve para <strong>actualizar el listado de propiedades</strong> y generar dos formatos de lectura:</p>
           <p>
-            - <strong>Vista Web</strong> (interactiva) para explorar.<br/>
-            - <strong>Vista Email</strong> (compacta) para enviar por correo.
+            - <strong>Vista Web</strong>: para explorar y filtrar desde el navegador.<br/>
+            - <strong>Vista Email</strong>: un resumen compacto, listo para enviar por correo.
           </p>
-          <p class="small">Si el scraping ya está corriendo, el botón se bloquea hasta que termine.</p>
+          <p class="small">Si la actualización ya está en curso, el botón se desactiva hasta que termine.</p>
 
           <div class="row">
-            <input id="token" placeholder="Token (opcional)" class="mono" style="min-width: 240px;" />
-            <button id="runBtn" title="Inicia el scraping y genera los previews">Actualizar propiedades</button>
+            <input id="token" placeholder="Clave de acceso (opcional)" class="mono" style="min-width: 240px;" />
+            <button id="runBtn" title="Inicia la actualización y genera las vistas">Actualizar propiedades</button>
             <a id="webLink" class="secondary" href="/preview/web" target="_blank" style="padding:10px 14px; border-radius:12px; border:1px solid rgba(148,163,184,0.25); background:rgba(15,23,42,0.6);">Abrir vista web</a>
             <a id="emailLink" class="secondary" href="/preview/email" target="_blank" style="padding:10px 14px; border-radius:12px; border:1px solid rgba(148,163,184,0.25); background:rgba(15,23,42,0.6);">Abrir vista email</a>
           </div>

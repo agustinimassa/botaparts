@@ -35,6 +35,14 @@ docker build -t bothouse .
 docker run --rm -p 3000:3000 --env-file .env -v "$(pwd)/storage:/app/storage" bothouse
 ```
 
+### Reducir tamaño de imagen (solo Chromium)
+La imagen oficial de Playwright incluye Chromium + Firefox + WebKit y es pesada. Si en tu proyecto usás solo Chromium (default en los scrapers), podés usar `Dockerfile.chromium`:
+
+```bash
+docker build -t bothouse:chromium -f Dockerfile.chromium .
+docker run --rm -p 3000:3000 --env-file .env -v "$(pwd)/storage:/app/storage" bothouse:chromium
+```
+
 ## Deploy en Render (Docker)
 
 Recomendado para Playwright (Chromium) porque evita problemas de instalación de browsers/deps del sistema.

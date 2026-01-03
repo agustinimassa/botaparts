@@ -8,10 +8,36 @@ import { runJob } from "../worker/runner.js";
 import { logger } from "../utils/logger.js";
 const app = Fastify({ logger: false });
 app.register(multipart);
+const INDEXING_HEADER_VALUE = "noindex, nofollow, noarchive";
+const allowIndexing = process.env.ALLOW_INDEXING === "true";
+if (!allowIndexing) {
+    // Defensa en profundidad: evita indexación aunque el crawler ignore robots.txt
+    app.addHook("onRequest", async (_request, reply) => {
+        reply.header("X-Robots-Tag", INDEXING_HEADER_VALUE);
+    });
+}
+// robots.txt (por defecto: bloquear todo)
+app.get("/robots.txt", async (_request, reply) => {
+    const body = allowIndexing
+        ? "User-agent: *\nDisallow:\n"
+        : "User-agent: *\nDisallow: /\n";
+    reply.type("text/plain; charset=utf-8").send(body);
+});
+// Variación que algunos bots consultan
+app.get("/.well-known/robots.txt", async (_request, reply) => {
+    const body = allowIndexing
+        ? "User-agent: *\nDisallow:\n"
+        : "User-agent: *\nDisallow: /\n";
+    reply.type("text/plain; charset=utf-8").send(body);
+});
 // Servir archivos estáticos de storage (incluye JSON y HTML)
 app.register(staticFiles, {
     root: path.resolve("storage"),
     prefix: "/storage/",
+    setHeaders: (res) => {
+        if (!allowIndexing)
+            res.setHeader("X-Robots-Tag", INDEXING_HEADER_VALUE);
+    },
 });
 // Endpoint específico para servir el JSON de propiedades
 app.get("/api/properties-data", async (request, reply) => {
@@ -42,6 +68,23 @@ app.get("/preview/email", async (request, reply) => {
     catch (err) {
         logger.error({ err }, "Error al leer preview");
         return reply.code(500).send({ error: "Error al leer preview" });
+    }
+});
+// Endpoint para ver el preview WEB (página grande/interactiva)
+app.get("/preview/web", async (request, reply) => {
+    const previewPath = path.resolve("storage", "web-preview.html");
+    try {
+        if (!fs.existsSync(previewPath)) {
+            return reply
+                .code(404)
+                .send({ error: "Preview web no encontrado. Ejecuta 'npm run test:scrapers' primero." });
+        }
+        const html = await fs.promises.readFile(previewPath, "utf-8");
+        reply.type("text/html").send(html);
+    }
+    catch (err) {
+        logger.error({ err }, "Error al leer preview web");
+        return reply.code(500).send({ error: "Error al leer preview web" });
     }
 });
 // Endpoint para listar todos los HTMLs disponibles

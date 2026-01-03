@@ -1,5 +1,5 @@
 import nodemailer from "nodemailer";
-export const sendEmailSummary = async (to, subject, listings) => {
+export const sendEmailSummary = async (to, subject, listings, opts) => {
     if (!to.length)
         return;
     const transporter = nodemailer.createTransport({
@@ -11,7 +11,7 @@ export const sendEmailSummary = async (to, subject, listings) => {
             pass: process.env.SMTP_PASS,
         },
     });
-    const html = renderHtml(listings);
+    const html = renderEmailCompact(listings, opts?.aiSummary ?? null);
     await transporter.sendMail({
         from: process.env.SMTP_FROM || process.env.SMTP_USER,
         to,
@@ -19,12 +19,127 @@ export const sendEmailSummary = async (to, subject, listings) => {
         html,
     });
 };
+export const renderEmailCompact = (listings, aiSummary) => {
+    const safeSummary = aiSummary && aiSummary.trim() ? aiSummary.trim() : null;
+    const sorted = [...listings].sort((a, b) => (a.priceUSD ?? Infinity) - (b.priceUSD ?? Infinity));
+    const top = sorted.slice(0, 20);
+    const rows = top
+        .map((l) => {
+        const ppm2 = computeUsdPerM2(l.priceUSD, l.area);
+        const aiLine = l.ai?.label
+            ? `<div style="margin-top:6px; font-size: 12px; color:#0f172a;">
+             <span style="${l.ai.kind === "oportunidad"
+                ? "background:#16a34a;"
+                : l.ai.kind === "alerta"
+                    ? "background:#f97316;"
+                    : "background:#2563eb;"} color:#fff; padding:2px 8px; border-radius:999px; font-weight:800; font-size:11px; letter-spacing:.4px; text-transform:uppercase;" title="${escapeHtml(l.ai.tooltip || "")}">
+               AI${typeof l.ai.score === "number" ? ` • ${Math.round(l.ai.score)}` : ""} • ${escapeHtml(l.ai.label)}
+             </span>
+             <span style="color:#334155;">${escapeHtml(l.ai.tooltip || "")}</span>
+           </div>`
+            : "";
+        return `
+        <tr>
+          <td style="padding:14px 12px; border-bottom:1px solid #e2e8f0;">
+            <div style="font-weight:800; color:#0f172a; font-size:14px; line-height:1.25;">
+              <a href="${escapeHtml(l.url)}" target="_blank" style="color:#2563eb; text-decoration:none;">${escapeHtml(l.title || "Sin título")}</a>
+            </div>
+            <div style="margin-top:6px; color:#334155; font-size:13px;">
+              <strong>Precio:</strong> ${l.priceUSD ? `$${l.priceUSD.toLocaleString()} USD` : "N/D"}
+              ${ppm2 ? ` • <strong>USD/m²:</strong> ${escapeHtml(formatUsdPerM2(ppm2))}` : ""}
+            </div>
+            <div style="margin-top:4px; color:#475569; font-size:13px;">
+              <strong>Ubicación:</strong> ${escapeHtml(l.location || "N/D")}
+              ${l.beds ? ` • <strong>🛏</strong> ${l.beds}` : ""}
+              ${l.baths ? ` • <strong>🚿</strong> ${l.baths}` : ""}
+              ${l.area ? ` • <strong>m²:</strong> ${escapeHtml(l.area)}` : ""}
+            </div>
+            ${aiLine}
+          </td>
+        </tr>
+      `;
+    })
+        .join("");
+    return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="noindex, nofollow, noarchive">
+        <title>Nuevas Propiedades</title>
+      </head>
+      <body style="margin:0; padding:0; background:#f1f5f9; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+        <div style="max-width:720px; margin:0 auto; padding:18px;">
+          <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden;">
+            <div style="padding:18px 18px 10px 18px; border-bottom:1px solid #e2e8f0;">
+              <div style="font-size:18px; font-weight:900; color:#0f172a;">🏠 Nuevas propiedades</div>
+              <div style="margin-top:6px; color:#475569; font-size:13px;">Total: <strong>${listings.length}</strong> • Mostrando: <strong>${top.length}</strong></div>
+              ${safeSummary
+        ? `<div style="margin-top:10px; padding:10px 12px; border-radius:10px; background:#0f172a; color:#e2e8f0; font-size:13px; line-height:1.35;">
+                       <strong style="color:#fff;">✨ AI:</strong> ${escapeHtml(safeSummary)}
+                     </div>`
+        : ""}
+            </div>
+            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+              <tbody>
+                ${rows || `<tr><td style="padding:18px; color:#475569;">No hay propiedades para mostrar.</td></tr>`}
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top:10px; color:#64748b; font-size:12px; text-align:center;">
+            Generado por Bothouse • ${new Date().toISOString()}
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
+};
 const getSiteName = (siteKey) => {
     const siteNames = {
         remaxrd: "RE/MAX RD",
         c21sunsets: "Century 21 Sunsets",
     };
     return siteNames[siteKey.toLowerCase()] || siteKey.toUpperCase();
+};
+const parseAreaM2 = (area) => {
+    if (!area)
+        return null;
+    const token = String(area).match(/[\d.,]+/)?.[0];
+    if (!token)
+        return null;
+    const raw = token.replace(/\s+/g, "");
+    // Manejo robusto de separadores (ej: "1,234.56" vs "1.234,56")
+    let normalized = raw;
+    if (raw.includes(",") && raw.includes(".")) {
+        // Asumimos "," como miles y "." como decimal (más común en los sitios que scrapeamos)
+        normalized = raw.replace(/,/g, "");
+    }
+    else if (raw.includes(",")) {
+        const parts = raw.split(",");
+        const last = parts[parts.length - 1] ?? "";
+        // Si termina con 1-2 dígitos, suele ser decimal "40,61"
+        if (last.length > 0 && last.length <= 2)
+            normalized = raw.replace(",", ".");
+        else
+            normalized = raw.replace(/,/g, "");
+    }
+    const n = Number.parseFloat(normalized);
+    return Number.isFinite(n) && n > 0 ? n : null;
+};
+const computeUsdPerM2 = (priceUSD, area) => {
+    if (!priceUSD || priceUSD <= 0)
+        return null;
+    const m2 = parseAreaM2(area);
+    if (!m2)
+        return null;
+    const v = priceUSD / m2;
+    return Number.isFinite(v) && v > 0 ? v : null;
+};
+const formatUsdPerM2 = (value) => {
+    // Para lectura rápida, lo redondeamos.
+    const rounded = Math.round(value);
+    return `$${rounded.toLocaleString()} USD/m²`;
 };
 // Función para renderizar HTML que carga datos desde JSON (para preview web)
 export const renderHtmlFromJson = () => {
@@ -34,6 +149,7 @@ export const renderHtmlFromJson = () => {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="noindex, nofollow, noarchive">
         <title>Nuevas Propiedades</title>
         <style>
           * {
@@ -166,6 +282,76 @@ export const renderHtmlFromJson = () => {
             transform: translateY(-4px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
           }
+          .ai-bar {
+            margin: 14px 0 0 0;
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 13px;
+            line-height: 1.4;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+          }
+          .ai-bar strong {
+            color: #ffffff;
+          }
+          .property-card.ai-oportunidad {
+            border: 2px solid rgba(34, 197, 94, 0.9);
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.12), 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 10px;
+          }
+          .property-card.ai-alerta {
+            border: 2px solid rgba(249, 115, 22, 0.95);
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12), 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 10px;
+          }
+          .ai-badge {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,0.18);
+            cursor: help;
+            white-space: nowrap;
+          }
+          .ai-badge.ai-oportunidad {
+            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+            color: #ffffff;
+          }
+          .ai-badge.ai-alerta {
+            background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+            color: #ffffff;
+          }
+          .ai-badge.ai-info {
+            background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);
+            color: #ffffff;
+          }
+          .ai-badge[data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 50%;
+            top: calc(100% + 10px);
+            transform: translateX(-50%);
+            width: min(360px, 70vw);
+            background: rgba(2, 6, 23, 0.95);
+            color: #e2e8f0;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            z-index: 50;
+            text-transform: none;
+            letter-spacing: 0;
+            font-weight: 600;
+            line-height: 1.35;
+            white-space: normal;
+          }
           .property-card.hidden {
             display: none;
           }
@@ -200,6 +386,7 @@ export const renderHtmlFromJson = () => {
           <div class="error" id="error" style="display: none;"></div>
           <div id="content" style="display: none;">
             <div class="stats-bar" id="stats-bar"></div>
+            <div class="ai-bar" id="ai-bar" style="display:none;"></div>
             <div class="filters-container" id="filters-container"></div>
             <div class="sort-container" id="sort-container"></div>
             <div class="no-results" id="no-results">No hay propiedades que coincidan con el filtro seleccionado.</div>
@@ -208,8 +395,9 @@ export const renderHtmlFromJson = () => {
         </div>
 
         <script>
-          let currentFilter = 'all';
-          let currentSort = 'asc';
+          let currentFilter = 'all'; // filtro por sitio
+          let currentAiFilter = 'all'; // filtro por AI score
+          let currentSort = { field: 'price', order: 'asc' };
           let allListings = [];
 
           async function loadData() {
@@ -265,12 +453,46 @@ export const renderHtmlFromJson = () => {
             return String(text).replace(/[&<>"']/g, (m) => map[m]);
           }
 
+          function parseAreaM2(area) {
+            if (!area) return null;
+            const match = String(area).match(/[\\d.,]+/);
+            if (!match) return null;
+            const raw = match[0].replace(/\\s+/g, '');
+
+            let normalized = raw;
+            if (raw.includes(',') && raw.includes('.')) {
+              normalized = raw.replace(/,/g, '');
+            } else if (raw.includes(',')) {
+              const parts = raw.split(',');
+              const last = parts[parts.length - 1] || '';
+              if (last.length > 0 && last.length <= 2) normalized = raw.replace(',', '.');
+              else normalized = raw.replace(/,/g, '');
+            }
+
+            const n = Number.parseFloat(normalized);
+            return Number.isFinite(n) && n > 0 ? n : null;
+          }
+
+          function computeUsdPerM2(priceUSD, area) {
+            if (!priceUSD || priceUSD <= 0) return null;
+            const m2 = parseAreaM2(area);
+            if (!m2) return null;
+            const v = priceUSD / m2;
+            return Number.isFinite(v) && v > 0 ? v : null;
+          }
+
+          function formatUsdPerM2(value) {
+            const rounded = Math.round(value);
+            return '$' + rounded.toLocaleString() + ' USD/m²';
+          }
+
           function renderPage(data) {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('content').style.display = 'block';
 
             const stats = data.stats;
             const listings = data.listings;
+            const aiSummary = data.aiSummary;
 
             // Renderizar estadísticas
             const statsBar = document.getElementById('stats-bar');
@@ -287,34 +509,98 @@ export const renderHtmlFromJson = () => {
               \`).join('')}
             \`;
 
-            // Renderizar botones de filtro
+            // Renderizar barra de AI (si existe)
+            const aiBar = document.getElementById('ai-bar');
+            if (aiSummary && typeof aiSummary === 'string' && aiSummary.trim()) {
+              aiBar.innerHTML = '<strong>✨ AI (análisis rápido):</strong> ' + escapeHtml(aiSummary);
+              aiBar.style.display = 'block';
+            } else {
+              aiBar.style.display = 'none';
+            }
+
+            // Renderizar filtros (sitio + AI score)
             const filtersContainer = document.getElementById('filters-container');
             filtersContainer.innerHTML = \`
               <div class="filters-title">🔍 Filtrar por sitio:</div>
-              <button class="filter-btn active" data-filter="all" onclick="filterProperties('all')">
+              <button class="filter-btn site-filter-btn active" data-site-filter="all" onclick="filterProperties('all')">
                 Todas (\${stats.total})
               </button>
               \${Object.keys(stats.bySite).map(siteKey => \`
-                <button class="filter-btn" data-filter="\${siteKey}" onclick="filterProperties('\${siteKey}')">
+                <button class="filter-btn site-filter-btn" data-site-filter="\${siteKey}" onclick="filterProperties('\${siteKey}')">
                   \${getSiteName(siteKey)} (\${stats.bySite[siteKey]})
                 </button>
               \`).join('')}
             \`;
 
-            // Renderizar botones de ordenamiento
-            const sortContainer = document.getElementById('sort-container');
-            sortContainer.innerHTML = \`
-              <div class="filters-title">📊 Ordenar por precio:</div>
-              <button class="sort-btn active" data-sort="asc" onclick="sortProperties('asc')">
-                Menor a Mayor ↑
+            // Agregar filtros por AI Score sin romper los filtros por sitio
+            const nAi = (listings || []).filter(l => l.ai && typeof l.ai.score === 'number').length;
+            filtersContainer.innerHTML += \`
+              <div class="filters-title" style="margin-top:14px;">🎯 AI Score:</div>
+              <button class="filter-btn ai-filter-btn active" data-ai-filter="all" onclick="filterByAiScore('all')">
+                Todas
               </button>
-              <button class="sort-btn" data-sort="desc" onclick="sortProperties('desc')">
-                Mayor a Menor ↓
+              <button class="filter-btn ai-filter-btn" data-ai-filter="ai-80" onclick="filterByAiScore('ai-80')">
+                Score ≥ 80
+              </button>
+              <button class="filter-btn ai-filter-btn" data-ai-filter="ai-60" onclick="filterByAiScore('ai-60')">
+                Score ≥ 60
+              </button>
+              <button class="filter-btn ai-filter-btn" data-ai-filter="ai-any" onclick="filterByAiScore('ai-any')">
+                Con AI (\${nAi})
+              </button>
+              <button class="filter-btn ai-filter-btn" data-ai-filter="ai-none" onclick="filterByAiScore('ai-none')">
+                Sin AI (\${stats.total - nAi})
               </button>
             \`;
 
+            // Renderizar botones de ordenamiento
+            const sortContainer = document.getElementById('sort-container');
+            renderSortControls();
+
             // Renderizar propiedades
             renderProperties(listings);
+          }
+
+          function renderSortControls() {
+            const sortContainer = document.getElementById('sort-container');
+            const arrow = (field, order) =>
+              currentSort.field === field ? (currentSort.order === 'asc' ? '↑' : '↓') : (order === 'asc' ? '↑' : '↓');
+
+            const nextOrder = (field) => {
+              if (currentSort.field !== field) return 'asc';
+              return currentSort.order === 'asc' ? 'desc' : 'asc';
+            };
+
+            const titleFor = (field) => {
+              const next = nextOrder(field);
+              if (field === 'price') return next === 'asc' ? 'Ordenar por precio (Menor → Mayor)' : 'Ordenar por precio (Mayor → Menor)';
+              if (field === 'ppm2') return next === 'asc' ? 'Ordenar por USD/m² (Menor → Mayor)' : 'Ordenar por USD/m² (Mayor → Menor)';
+              if (field === 'aiScore') return next === 'asc' ? 'Ordenar por AI Score (Menor → Mayor)' : 'Ordenar por AI Score (Mayor → Menor)';
+              return 'Ordenar';
+            };
+
+            const btn = (field, label) => \`
+              <button
+                class="sort-btn \${currentSort.field === field ? 'active' : ''}"
+                data-field="\${field}"
+                onclick="toggleSort('\${field}')"
+                title="\${titleFor(field)}"
+              >
+                \${label} \${currentSort.field === field ? (currentSort.order === 'asc' ? '↑' : '↓') : ''}
+              </button>
+            \`;
+
+            sortContainer.innerHTML = \`
+              <div class="filters-title">📊 Ordenar:</div>
+              \${btn('price', 'Precio')}
+              \${btn('ppm2', 'USD/m²')}
+              \${btn('aiScore', 'AI Score')}
+            \`;
+          }
+
+          function toggleSort(field) {
+            const order = (currentSort.field === field) ? (currentSort.order === 'asc' ? 'desc' : 'asc') : 'asc';
+            sortProperties(field, order);
           }
 
           function renderProperties(listings) {
@@ -323,9 +609,14 @@ export const renderHtmlFromJson = () => {
               const siteName = getSiteName(l.siteKey);
               const mainImage = l.images && l.images.length > 0 ? l.images[0] : null;
               const additionalImages = l.images && l.images.length > 1 ? l.images.slice(1, 4) : [];
+              const ppm2 = computeUsdPerM2(l.priceUSD, l.area);
+              const ai = l.ai;
+              const aiKind = ai && ai.kind ? String(ai.kind) : null;
+              const aiClass = aiKind ? ('ai-' + aiKind) : '';
+              const aiScore = ai && typeof ai.score === 'number' ? ai.score : null;
               
               return \`
-                <div class="property-card" data-site="\${escapeHtml(l.siteKey)}" data-price="\${l.priceUSD ?? 0}">
+                <div class="property-card \${aiClass}" data-site="\${escapeHtml(l.siteKey)}" data-price="\${l.priceUSD ?? 0}" data-ppm2="\${ppm2 ?? ''}" data-ai-score="\${aiScore ?? ''}">
                   \${mainImage ? \`
                   <div style="width: 100%; height: 200px; overflow: hidden; background-color: #f5f5f5;">
                     <img src="\${mainImage}" alt="\${escapeHtml(l.title || "Propiedad")}" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display='none'; this.parentElement.style.display='none';" />
@@ -334,6 +625,11 @@ export const renderHtmlFromJson = () => {
                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                       <h3 style="margin: 0; color: #333; font-size: 20px; flex: 1; min-width: 200px;">\${escapeHtml(l.title || "Sin título")}</h3>
                       <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                        \${ai && ai.label ? \`
+                          <span class="ai-badge \${aiClass}" data-tooltip="\${escapeHtml(ai.tooltip || '')}">
+                            AI • \${aiScore !== null ? (aiScore + ' • ') : ''}\${escapeHtml(ai.label)}
+                          </span>
+                        \` : ''}
                         \${l.badges && l.badges.length > 0 ? l.badges.map(badge => \`
                           <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);">\${escapeHtml(badge)}</span>
                         \`).join('') : ''}
@@ -353,6 +649,7 @@ export const renderHtmlFromJson = () => {
                     \${l.beds ? \`<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">🛏️ Dormitorios:</strong> \${l.beds}</p>\` : ""}
                     \${l.baths ? \`<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">🚿 Baños:</strong> \${l.baths}</p>\` : ""}
                     \${l.area ? \`<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">📐 Área:</strong> \${l.area}</p>\` : ""}
+                    \${ppm2 ? \`<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">📊 USD/m²:</strong> \${formatUsdPerM2(ppm2)}</p>\` : ""}
                     <a href="\${l.url}" target="_blank" style="display: inline-block; margin-top: 12px; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold; transition: background-color 0.2s;">Ver detalle →</a>
                   </div>
                 </div>
@@ -360,66 +657,67 @@ export const renderHtmlFromJson = () => {
             }).join('');
           }
 
-          function filterProperties(siteKey) {
-            currentFilter = siteKey;
-            const buttons = document.querySelectorAll('.filter-btn');
-            const noResults = document.getElementById('no-results');
-            let visibleListings = [];
-
-            // Actualizar botones activos
-            buttons.forEach(btn => {
-              if (btn.getAttribute('data-filter') === siteKey) {
-                btn.classList.add('active');
-              } else {
-                btn.classList.remove('active');
-              }
-            });
-
-            // Filtrar propiedades
-            if (siteKey === 'all') {
-              visibleListings = allListings;
-            } else {
-              visibleListings = allListings.filter(l => l.siteKey === siteKey);
-            }
-
-            // Aplicar ordenamiento
-            sortProperties(currentSort, false, visibleListings);
-
-            // Mostrar/ocultar mensaje de no resultados
-            if (visibleListings.length === 0) {
-              noResults.classList.add('show');
-            } else {
-              noResults.classList.remove('show');
-            }
-
-            // Scroll suave al inicio
-            if (visibleListings.length > 0) {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+          function applyAiFilter(listings, mode) {
+            if (!mode || mode === 'all') return listings;
+            if (mode === 'ai-any') return listings.filter(l => l.ai && typeof l.ai.score === 'number');
+            if (mode === 'ai-none') return listings.filter(l => !(l.ai && typeof l.ai.score === 'number'));
+            if (mode === 'ai-80') return listings.filter(l => l.ai && typeof l.ai.score === 'number' && l.ai.score >= 80);
+            if (mode === 'ai-60') return listings.filter(l => l.ai && typeof l.ai.score === 'number' && l.ai.score >= 60);
+            return listings;
           }
 
-          function sortProperties(sortOrder, updateFilter = true, listingsToSort = null) {
-            currentSort = sortOrder;
-            const sortButtons = document.querySelectorAll('.sort-btn');
+          function filterProperties(siteKey) {
+            currentFilter = siteKey;
+            const siteButtons = document.querySelectorAll('.site-filter-btn');
+            const noResults = document.getElementById('no-results');
+
+            // Actualizar botones activos (solo sitio)
+            siteButtons.forEach(btn => {
+              if (btn.getAttribute('data-site-filter') === siteKey) btn.classList.add('active');
+              else btn.classList.remove('active');
+            });
+
+            // Filtrar por sitio y luego por AI
+            let visibleListings = siteKey === 'all' ? allListings : allListings.filter(l => l.siteKey === siteKey);
+            visibleListings = applyAiFilter(visibleListings, currentAiFilter);
+
+            // Aplicar ordenamiento
+            sortProperties(currentSort.field, currentSort.order, false, visibleListings);
+
+            // Mostrar/ocultar mensaje de no resultados
+            if (visibleListings.length === 0) noResults.classList.add('show');
+            else noResults.classList.remove('show');
+
+            if (visibleListings.length > 0) window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+
+          function sortProperties(field, order, updateFilter = true, listingsToSort = null) {
+            currentSort = { field, order };
             const listings = listingsToSort || allListings.filter(l => {
               if (currentFilter === 'all') return true;
               return l.siteKey === currentFilter;
             });
-
-            // Actualizar botones de ordenamiento
-            sortButtons.forEach(btn => {
-              if (btn.getAttribute('data-sort') === sortOrder) {
-                btn.classList.add('active');
-              } else {
-                btn.classList.remove('active');
-              }
-            });
+            // Re-render del UI de ordenamiento (flechas + tooltips)
+            renderSortControls();
 
             // Ordenar propiedades
             const sorted = [...listings].sort((a, b) => {
+              if (field === 'ppm2') {
+                const aP = computeUsdPerM2(a.priceUSD, a.area);
+                const bP = computeUsdPerM2(b.priceUSD, b.area);
+                const vA = aP ?? Infinity;
+                const vB = bP ?? Infinity;
+                return order === 'asc' ? vA - vB : vB - vA;
+              }
+              if (field === 'aiScore') {
+                const aS = (a.ai && typeof a.ai.score === 'number') ? a.ai.score : -Infinity;
+                const bS = (b.ai && typeof b.ai.score === 'number') ? b.ai.score : -Infinity;
+                return order === 'asc' ? aS - bS : bS - aS;
+              }
+              // default: price
               const priceA = a.priceUSD ?? Infinity;
               const priceB = b.priceUSD ?? Infinity;
-              return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
+              return order === 'asc' ? priceA - priceB : priceB - priceA;
             });
 
             // Renderizar propiedades ordenadas
@@ -429,6 +727,25 @@ export const renderHtmlFromJson = () => {
             if (updateFilter) {
               filterProperties(currentFilter);
             }
+          }
+
+          function filterByAiScore(mode) {
+            currentAiFilter = mode || 'all';
+            const aiButtons = document.querySelectorAll('.ai-filter-btn');
+            const noResults = document.getElementById('no-results');
+
+            aiButtons.forEach(btn => {
+              if (btn.getAttribute('data-ai-filter') === currentAiFilter) btn.classList.add('active');
+              else btn.classList.remove('active');
+            });
+
+            // Aplicar AI sobre el filtro de sitio actual
+            let visible = currentFilter === 'all' ? allListings : allListings.filter(l => l.siteKey === currentFilter);
+            visible = applyAiFilter(visible, currentAiFilter);
+
+            sortProperties(currentSort.field, currentSort.order, false, visible);
+            if (visible.length === 0) noResults.classList.add('show');
+            else noResults.classList.remove('show');
           }
 
           // Cargar datos al iniciar
@@ -490,8 +807,27 @@ export const renderHtml = (listings) => {
         const siteName = getSiteName(l.siteKey);
         const mainImage = l.images && l.images.length > 0 ? l.images[0] : null;
         const additionalImages = l.images && l.images.length > 1 ? l.images.slice(1, 4) : [];
+        const ppm2 = computeUsdPerM2(l.priceUSD, l.area);
+        const ai = l.ai;
+        const aiKind = ai?.kind ? String(ai.kind) : null;
+        const aiBorder = aiKind === "oportunidad"
+            ? "border: 2px solid rgba(34,197,94,0.9); box-shadow: 0 0 0 4px rgba(34,197,94,0.12), 0 2px 4px rgba(0,0,0,0.1);"
+            : aiKind === "alerta"
+                ? "border: 2px solid rgba(249,115,22,0.95); box-shadow: 0 0 0 4px rgba(249,115,22,0.12), 0 2px 4px rgba(0,0,0,0.1);"
+                : "";
+        const aiBadge = ai?.label
+            ? `
+              <span title="${escapeHtml(ai.tooltip || "")}" style="${aiKind === "oportunidad"
+                ? "background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);"
+                : aiKind === "alerta"
+                    ? "background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);"
+                    : "background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);"} color: #ffffff; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.18); white-space: nowrap; cursor: help;">
+                AI • ${escapeHtml(ai.label)}
+              </span>
+            `
+            : "";
         return `
-      <div class="property-card" data-site="${escapeHtml(l.siteKey)}" data-price="${l.priceUSD ?? 0}" style="border: 1px solid #e0e0e0; padding: 0; margin-bottom: 20px; border-radius: 8px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;">
+      <div class="property-card" data-site="${escapeHtml(l.siteKey)}" data-price="${l.priceUSD ?? 0}" style="border: 1px solid #e0e0e0; padding: 0; margin-bottom: 20px; border-radius: 8px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; ${aiBorder}">
         ${mainImage ? `
         <div style="width: 100%; height: 200px; overflow: hidden; background-color: #f5f5f5;">
           <img src="${mainImage}" alt="${escapeHtml(l.title || "Propiedad")}" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display='none'; this.parentElement.style.display='none';" />
@@ -500,6 +836,7 @@ export const renderHtml = (listings) => {
           <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <h3 style="margin: 0; color: #333; font-size: 20px; flex: 1; min-width: 200px;">${escapeHtml(l.title || "Sin título")}</h3>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+              ${aiBadge}
               ${l.badges && l.badges.length > 0 ? l.badges.map(badge => `
                 <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);">${escapeHtml(badge)}</span>
               `).join('') : ''}
@@ -519,6 +856,7 @@ export const renderHtml = (listings) => {
           ${l.beds ? `<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">🛏️ Dormitorios:</strong> ${l.beds}</p>` : ""}
           ${l.baths ? `<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">🚿 Baños:</strong> ${l.baths}</p>` : ""}
           ${l.area ? `<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">📐 Área:</strong> ${l.area}</p>` : ""}
+          ${ppm2 ? `<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">📊 USD/m²:</strong> ${formatUsdPerM2(ppm2)}</p>` : ""}
           <a href="${l.url}" target="_blank" style="display: inline-block; margin-top: 12px; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold; transition: background-color 0.2s;">Ver detalle →</a>
         </div>
       </div>`;

@@ -33,6 +33,7 @@ Las variables disponibles son:
 - `PLAYWRIGHT_HEADLESS` (opcional, default: `true`): Modo headless de Playwright
   - `true` = navegador sin interfaz gráfica (más rápido, recomendado para producción)
   - `false` = navegador visible (útil para debugging y desarrollo)
+- `ALLOW_INDEXING` (opcional, default: `false`): si lo seteas en `true`, permite indexación (desactiva `X-Robots-Tag` y deja `robots.txt` sin bloqueo)
 
 ### Variables Groq (AI) (opcional)
 - `GROQ_API_KEY` (opcional): API key de Groq Cloud. Se usa para `npm run ai:analyze` (free tier con rate limits).
@@ -105,6 +106,12 @@ SMTP_PASS=tu-app-password
 - `GET /preview/list` - Listar todos los HTMLs disponibles en storage
 - `GET /preview/:filename` - Ver cualquier HTML por nombre (sin extensión .html)
 - `GET /storage/:filename` - Acceso directo a archivos en storage (incluyendo HTMLs, JSONs, etc.)
+
+### Anti-indexación (por defecto)
+- `GET /robots.txt` - Por defecto bloquea todo (`Disallow: /`)
+- `GET /.well-known/robots.txt` - Alias de `robots.txt`
+
+Además, el servidor agrega `X-Robots-Tag: noindex, nofollow, noarchive` a las respuestas (incluyendo `/storage/`), y los HTML generados incluyen `<meta name="robots" ...>` para cubrir el caso de publicar el archivo suelto.
 
 **Ejemplos:**
 - `http://localhost:3000/preview/email` - Preview del email

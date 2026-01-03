@@ -10,10 +10,39 @@ import { logger } from "../utils/logger.js";
 const app = Fastify({ logger: false });
 app.register(multipart);
 
+const INDEXING_HEADER_VALUE = "noindex, nofollow, noarchive";
+const allowIndexing = process.env.ALLOW_INDEXING === "true";
+
+if (!allowIndexing) {
+  // Defensa en profundidad: evita indexación aunque el crawler ignore robots.txt
+  app.addHook("onRequest", async (_request, reply) => {
+    reply.header("X-Robots-Tag", INDEXING_HEADER_VALUE);
+  });
+}
+
+// robots.txt (por defecto: bloquear todo)
+app.get("/robots.txt", async (_request, reply) => {
+  const body = allowIndexing
+    ? "User-agent: *\nDisallow:\n"
+    : "User-agent: *\nDisallow: /\n";
+  reply.type("text/plain; charset=utf-8").send(body);
+});
+
+// Variación que algunos bots consultan
+app.get("/.well-known/robots.txt", async (_request, reply) => {
+  const body = allowIndexing
+    ? "User-agent: *\nDisallow:\n"
+    : "User-agent: *\nDisallow: /\n";
+  reply.type("text/plain; charset=utf-8").send(body);
+});
+
 // Servir archivos estáticos de storage (incluye JSON y HTML)
 app.register(staticFiles, {
   root: path.resolve("storage"),
   prefix: "/storage/",
+  setHeaders: (res) => {
+    if (!allowIndexing) res.setHeader("X-Robots-Tag", INDEXING_HEADER_VALUE);
+  },
 });
 
 // Endpoint específico para servir el JSON de propiedades

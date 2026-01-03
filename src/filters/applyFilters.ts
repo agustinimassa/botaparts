@@ -2,10 +2,8 @@ import { Filters, Listing } from "../models/types.js";
 import { logger } from "../utils/logger.js";
 
 export const applyFilters = (listings: Listing[], filters: Filters): Listing[] => {
-  // Asegurar que maxPriceUSD sea un número
-  const maxPrice = typeof filters.maxPriceUSD === "number" 
-    ? filters.maxPriceUSD 
-    : filters.maxPriceUSD ? parseFloat(filters.maxPriceUSD.toString()) : undefined;
+  // `config/excel.ts` ya normaliza valores numéricos a number.
+  const maxPrice = filters.maxPriceUSD;
   
   if (maxPrice && isNaN(maxPrice)) {
     logger.warn({ maxPriceUSD: filters.maxPriceUSD }, "maxPriceUSD no es un número válido, ignorando filtro");

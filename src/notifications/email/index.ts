@@ -79,6 +79,7 @@ export const renderEmailCompact = (listings: Listing[], aiSummary?: string | nul
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="noindex, nofollow, noarchive">
         <title>Nuevas Propiedades</title>
       </head>
       <body style="margin:0; padding:0; background:#f1f5f9; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
@@ -164,6 +165,7 @@ export const renderHtmlFromJson = (): string => {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="noindex, nofollow, noarchive">
         <title>Nuevas Propiedades</title>
         <style>
           * {

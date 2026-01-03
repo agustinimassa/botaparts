@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-01-02T19:46:44.952Z",
+  "timestamp": "2026-01-03T17:45:16.078Z",
   "listings": [
     {
       "siteKey": "remaxrd",
@@ -417,6 +417,577 @@
       ]
     },
     {
+      "siteKey": "remaxrd",
+      "listingId": "215636",
+      "title": "Espacio Que Combina Estilo Comodidad Ubicacion",
+      "url": "https://remaxrd.com/propiedad/apartamento/un-espacio-que-combina-estilo-comodidad-y-ubicacion-215636?city=bavaro",
+      "priceUSD": 380000,
+      "beds": 2,
+      "baths": 2,
+      "area": "140.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/D-2411-1764819898-ad8a283d-0564-498c-bfc6-7e2f3939f8d6.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "215578",
+      "title": "Apartamento Lujo Cerca Playa 215578",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-de-lujo-cerca-de-la-playa-215578?city=bavaro",
+      "priceUSD": 495000,
+      "beds": 3,
+      "baths": 3,
+      "area": "165.50 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/D-1958-1764621634-9f21d054-e91b-4748-acdb-ed7100d32c56.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "213481",
+      "title": "Apartamento Lujo Residencial Retiro Playa Bibijagua",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-de-lujo-residencial-retiro-ii-playa-bibijagua-213481?city=bavaro",
+      "priceUSD": 245000,
+      "beds": 2,
+      "baths": 2,
+      "area": "115.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/R-213481-1760033909-4cc5d148-0f15-41a1-97cc-b043e29dbad5.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "212026",
+      "title": "Apartamento Ensueno Iberoestate Punta Cana 212026",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-de-ensueno-en-iberoestate-punta-cana-212026?city=bavaro",
+      "priceUSD": 340000,
+      "beds": 2,
+      "baths": 2,
+      "area": "112.27 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/D-921-1758567818-cdd63baf-dc05-40d5-aeb6-f0abfa473286.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "211165",
+      "title": "Apartamento Venta White Sands Bavaro 211165",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-venta-en-white-sands-bavaro-211165?city=bavaro",
+      "priceUSD": 150000,
+      "beds": 2,
+      "baths": 2,
+      "area": "98.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13179-1756598359-c1f5d28a79806be08581dd5ebbe9e2eb.png"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "210953",
+      "title": "Apartamento Cocotal Golf Bavaro 210953",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-cocotal-golf-bavaro-210953?city=bavaro",
+      "priceUSD": 225000,
+      "beds": 2,
+      "baths": 2,
+      "area": "110.10 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13975-1756137830-2f2b6c65e731efeadb5d8ffd92022c86.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "210849",
+      "title": "Descubre Este Hermoso Apartamento Pasos Playa",
+      "url": "https://remaxrd.com/propiedad/apartamento/descubre-este-hermoso-apartamento-a-pasos-de-la-playa-210849?city=bavaro",
+      "priceUSD": 150000,
+      "beds": 2,
+      "baths": 2,
+      "area": "85.78 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/12919-1755789085-f930eab426ab196050bc5bf6f8750010.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "210091",
+      "title": "Oportunidad Inversion White Sands Punta Cana",
+      "url": "https://remaxrd.com/propiedad/apartamento/oportunidad-de-inversion-en-white-sands-punta-cana-210091?city=bavaro",
+      "priceUSD": 165000,
+      "beds": 2,
+      "baths": 2,
+      "area": "87.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/14779-1754346919-f191345cbaeaf2d0b67597a19b7408bf.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "209217",
+      "title": "Apartamento Bavaro Cortecito 209217",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-bavaro-el-cortecito-209217?city=bavaro",
+      "priceUSD": 210000,
+      "beds": 2,
+      "baths": 2,
+      "area": "104.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13822-1753290975-bb5ce3131e8b23fae0931187418985a3.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "206774",
+      "title": "Refugio Cocotal Apartamento Amueblado Coral Golf",
+      "url": "https://remaxrd.com/propiedad/apartamento/tu-refugio-en-cocotal-apartamento-amueblado-en-coral-golf-206774?city=bavaro",
+      "priceUSD": 215000,
+      "beds": 2,
+      "baths": 2,
+      "area": "112.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13220-1747773278-bdc7a342a0887886d3b131513d3244af.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "206508",
+      "title": "Ultima Unidad Disponible Condo Habitaciones 206508",
+      "url": "https://remaxrd.com/propiedad/apartamento/ultima-unidad-disponible--condo-de-2-habitaciones-206508?city=bavaro",
+      "priceUSD": 375000,
+      "beds": 2,
+      "baths": 2,
+      "area": "112.71 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13799-1747251505-54f25fc81210526b06cd17a69b10b9c0.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "205679",
+      "title": "Apartamento Bavaro Cortecito 205679",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-bavaro-el-cortecito-205679?city=bavaro",
+      "priceUSD": 190000,
+      "beds": 2,
+      "baths": 3,
+      "area": "107.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/14222-1745554776-f3705089001df68c6bb485a4194b119e.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "204961",
+      "title": "Apartamento Arena Village Cortecito Bavaro 204961",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-arena-village-el-cortecito-bavaro-204961?city=bavaro",
+      "priceUSD": 215000,
+      "beds": 2,
+      "baths": 3,
+      "area": "107.20 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/R-204961-1766713033-f9ae5cbe-557e-48ee-9f3e-f8a837b674ed.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "204112",
+      "title": "Apartamento Costa Bavaro Hab Banos 204112",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-costa-bavaro-2-hab-2-banos-204112?city=bavaro",
+      "priceUSD": 187000,
+      "beds": 2,
+      "baths": 2,
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13220-1742836745-c40e643aabbf39f93ff20686701c87f8.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "202801",
+      "title": "Estupendo Apartamento Habitaciones Cocotal 202801",
+      "url": "https://remaxrd.com/propiedad/apartamento/estupendo-apartamento-de-3-habitaciones-en-cocotal-202801?city=bavaro",
+      "priceUSD": 390000,
+      "beds": 3,
+      "baths": 2,
+      "area": "126.31 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13220-1740603422-b796b25de3eedf4e7e956ef26460decd.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "200330",
+      "title": "Apartamento Bavaro Higuey Habitaciones 200330",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-bavaro-higuey-2-habitaciones-200330?city=hig%C3%BCey",
+      "priceUSD": 103000,
+      "beds": 2,
+      "baths": 2,
+      "area": "71.07 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13453-1736977472-d9319ce360129c163b68e6500ed8ab04.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "200144",
+      "title": "Hermoso Apartamento Residencial Larimar 200144",
+      "url": "https://remaxrd.com/propiedad/apartamento/hermoso-apartamento-en-residencial-larimar-200144?city=bavaro",
+      "priceUSD": 239000,
+      "beds": 2,
+      "baths": 2,
+      "area": "95.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13220-1734454894-a8a59c1b36a3f3f743369fbd094b5beb.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "199783",
+      "title": "Apartamento Cocotal Golf Bavaro 199783",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-cocotal-golf-bavaro-199783?city=bavaro",
+      "priceUSD": 230000,
+      "beds": 2,
+      "baths": 2,
+      "area": "128.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13822-1733338246-9177fb3e4ab243cb4e5cd2a1d33f546e.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "198943",
+      "title": "Vende Apartamento Cocotal 198943",
+      "url": "https://remaxrd.com/propiedad/apartamento/se-vende-apartamento-en-el-cocotal-198943?city=bavaro",
+      "priceUSD": 190000,
+      "beds": 2,
+      "baths": 2,
+      "area": "106.66 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13806-1731528285-ddcd3ccfbf9f41e10be0a27111ce83bf.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "197120",
+      "title": "Apartamento Amueblado Cocotal Golf Country Club",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-amueblado-en-cocotal-golf--country-club-197120?city=bavaro",
+      "priceUSD": 315000,
+      "beds": 2,
+      "baths": 2,
+      "area": "112.94 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13343-1751546933-640452c5e501bb9f3cbe02c101ef7460.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "196680",
+      "title": "Apartemnto Venta Cocotal 196680",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartemnto-en-venta-cocotal-196680?city=hig%C3%BCey",
+      "priceUSD": 318000,
+      "beds": 2,
+      "baths": 2,
+      "area": "95.32 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/808-1727711597-495d6fa42836aaeff41e4d3c7e8f8ca3.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "192990",
+      "title": "Apartamento Higuey Cortecito 192990",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-higuey-el-cortecito-192990?city=hig%C3%BCey",
+      "priceUSD": 295000,
+      "beds": 2,
+      "baths": 2,
+      "area": "97.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/12919-1722035987-db4961e2737bf73ac69b57262d335c38.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "192178",
+      "title": "Cocotal Golf Country Club Bajado Precio",
+      "url": "https://remaxrd.com/propiedad/apartamento/cocotal-golf--country-club--bajado-de-precio-192178?city=bavaro",
+      "priceUSD": 229000,
+      "beds": 2,
+      "baths": 2,
+      "area": "126.01 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13220-1720113738-0e00595c2ed42ceef33a981526bbe3bb.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "192066",
+      "title": "Moderno Apartamento Cerca Playa 192066",
+      "url": "https://remaxrd.com/propiedad/apartamento/moderno-apartamento-cerca-de-la-playa-192066?city=bavaro",
+      "priceUSD": 258900,
+      "beds": 2,
+      "baths": 2,
+      "area": "105.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13822-1719623515-010b4481aa5f098e8df58ec893d5c31f.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "187766",
+      "title": "Apartamento Pasos Playa Los Corales 187766",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-a-pasos-de-la-playa-de-los-corales-187766?city=bavaro",
+      "priceUSD": 265000,
+      "beds": 2,
+      "baths": 2,
+      "area": "86.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13521-1710444973-0cd13925fc44f2a861b697a5d21aab66.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "182728",
+      "title": "Apartamento Cocotal Golf Bavaro 182728",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-cocotal-golf-bavaro-182728?city=bavaro",
+      "priceUSD": 180000,
+      "beds": 2,
+      "baths": 2,
+      "area": "75.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13806-1699393220-5cbb3d8298d02ab25439f18288f849aa.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "177512",
+      "title": "Apartamento Condominio Paseo Del Mar Cortecito",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-condominio-paseo-del-mar-el-cortecito--bavaro-177512?city=bavaro",
+      "priceUSD": 192000,
+      "beds": 2,
+      "baths": 2,
+      "area": "93.18 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13103-1689625597-1745ce79d7ba570e3bda70663ee03f3d.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "169442",
+      "title": "Apartamento Residencial Macao 169442",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-residencial-macao-169442?city=hig%C3%BCey",
+      "priceUSD": 95000,
+      "beds": 2,
+      "baths": 2,
+      "area": "120.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13806-1673892025-8955aa5f0f7a1fc323298a6294a6f5ca.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "169435",
+      "title": "Beach Garden 169435",
+      "url": "https://remaxrd.com/propiedad/apartamento/beach-garden-2-169435?city=bavaro",
+      "priceUSD": 275000,
+      "beds": 2,
+      "baths": 2,
+      "area": "97.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13806-1673472231-aae32186e6e362667c6c25ed482fc414.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "169418",
+      "title": "Apartamento Vern Higey 169418",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-vern-higey-169418?city=hig%C3%BCey",
+      "priceUSD": 175000,
+      "beds": 2,
+      "baths": 2,
+      "area": "90.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13806-1698247514-d2f753e03677e7d7f4a24cb12b20e0ca.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "169417",
+      "title": "Apartamento Vern Higey 169417",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-vern-higey-169417?city=hig%C3%BCey",
+      "priceUSD": 175000,
+      "beds": 2,
+      "baths": 2,
+      "area": "90.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13806-1698247777-fcf0422462e2c4221b02c10d9a67e8f3.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "168177",
+      "title": "Apartamento Cortecito Bavaro 168177",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-el-cortecito-bavaro-168177?city=bavaro",
+      "priceUSD": 275000,
+      "beds": 2,
+      "baths": 2,
+      "area": "140.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13806-1670966114-e55fcee62833a1d2dcc7b11ff09f3032.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "163228",
+      "title": "Apartamento Cortecito Bavaro 163228",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-el-cortecito-bavaro-163228?city=bavaro",
+      "priceUSD": 280000,
+      "beds": 2,
+      "baths": 2,
+      "area": "97.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13806-1665774350-9351ca9aedd232ce6c163eb865e2e4e0.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "163227",
+      "title": "Apartamento Cortecito Bavaro 163227",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-el-cortecito-bavaro-163227?city=bavaro",
+      "priceUSD": 390000,
+      "beds": 3,
+      "baths": 3,
+      "area": "240.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13806-1665770642-4ed383153a3197a7fffb775e7c09a9d6.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "161455",
+      "title": "Proyecto de Apartamento",
+      "url": "https://remaxrd.com/propiedad/proyecto-de-apartamento/el-cortecito-bavaro-161455?city=bavaro",
+      "priceUSD": 160000,
+      "beds": 2,
+      "baths": 2,
+      "area": "125.81 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13428-1679868942-ec81ab4121abcf176f6e7f713edbb29b.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "160570",
+      "title": "Apartamento Venta 160570",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-venta-160570?city=bavaro",
+      "priceUSD": 170000,
+      "beds": 2,
+      "baths": 2,
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13822-1660337635-7d57a6b03b23c6025ea6d2326d8b74b8.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "138095",
+      "title": "Proyecto de Apartamento",
+      "url": "https://remaxrd.com/propiedad/proyecto-de-apartamento/apartamento-en-cabeza-de-toro-con-amenidades-138095?city=cabeza-de-toro",
+      "priceUSD": 170500,
+      "beds": 3,
+      "baths": 3,
+      "area": "208.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/R-138095-1762293405-5f5c3060-45b0-4e9f-abf1-35ac0250b450.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "209992",
+      "title": "Penthouse Vista Panoramica Mar Bayahibe 209992",
+      "url": "https://remaxrd.com/propiedad/penthouse/penthouse-con-vista-panoramica-al-mar-en-bayahibe-209992?city=bayahibe",
+      "priceUSD": 280000,
+      "location": "BAYAHIBE, BAYAHIBE",
+      "beds": 2,
+      "baths": 2,
+      "area": "162.55 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/14540-1753985668-062b52ebc409ca29eacda52b7d900730.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "213761",
+      "title": "Espectacular Penthouse Vista Mar Secret Garden",
+      "url": "https://remaxrd.com/propiedad/penthouse/espectacular-penthouse-con-vista-al-mar-en-secret-garden-213761?city=bavaro",
+      "priceUSD": 309000,
+      "beds": 2,
+      "baths": 2,
+      "area": "121.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/D-1455-1760474060-982a3d38-46c3-4d17-a93e-8b6f2fb35c2e.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "216218",
+      "title": "Penthouse Vista Mar Secret Garden 216218",
+      "url": "https://remaxrd.com/propiedad/penthouse/penthouse-con-vista-al-mar-en-secret-garden-216218?city=bavaro",
+      "priceUSD": 369000,
+      "beds": 3,
+      "baths": 3,
+      "area": "163.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/D-2755-1766440726-127e855c-7a58-4ffe-b969-ae7aa68d3b75.webp"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "206896",
+      "title": "Penthouse Lujo Bavaro Los Corales 206896",
+      "url": "https://remaxrd.com/propiedad/penthouse/penthouse-de-lujo-en-bavaro-los-corales-206896?city=bavaro",
+      "priceUSD": 450000,
+      "beds": 3,
+      "baths": 3,
+      "area": "190.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/14100-1747946036-d0f26efe544520167ec1fd918eb8e881.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "204957",
+      "title": "Penthouse Independiente Amueblado Pasos Playa 204957",
+      "url": "https://remaxrd.com/propiedad/penthouse/penthouse-independiente-amueblado-a-pasos-de-la-playa-204957?city=bavaro",
+      "priceUSD": 380000,
+      "beds": 3,
+      "baths": 3,
+      "area": "173.50 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/14785-1744041283-6df64c2d901cd246805242d574bea39a.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "192146",
+      "title": "Hermoso Penthouse Cortecito Bajado Precio 192146",
+      "url": "https://remaxrd.com/propiedad/penthouse/hermoso-penthouse-en-cortecito-bajado-de-precio-192146?city=bavaro",
+      "priceUSD": 215000,
+      "beds": 2,
+      "baths": 2,
+      "area": "166.75 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13220-1719948731-b00dd51a7c0753d37314af3c0dec9759.jpg"
+      ]
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "169436",
+      "title": "Penthouse Macao Higuey 169436",
+      "url": "https://remaxrd.com/propiedad/penthouse/penthouse-en-el-macao-higuey-169436?city=hig%C3%BCey",
+      "priceUSD": 200000,
+      "beds": 3,
+      "baths": 2,
+      "area": "120.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13806-1673474940-8e0a2c47f6689b60ef97b32d6efe552b.jpg"
+      ]
+    },
+    {
       "siteKey": "c21sunsets",
       "listingId": "1159241",
       "title": "Exclusive Villa In Tracadero – Luxury, Privacy & Sustainability",
@@ -569,9 +1140,9 @@
     }
   ],
   "stats": {
-    "total": 40,
+    "total": 84,
     "bySite": {
-      "remaxrd": 29,
+      "remaxrd": 73,
       "c21sunsets": 11
     }
   }

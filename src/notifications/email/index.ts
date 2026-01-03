@@ -30,6 +30,44 @@ const getSiteName = (siteKey: string): string => {
   return siteNames[siteKey.toLowerCase()] || siteKey.toUpperCase();
 };
 
+const parseAreaM2 = (area?: string): number | null => {
+  if (!area) return null;
+  const token = String(area).match(/[\d.,]+/)?.[0];
+  if (!token) return null;
+
+  const raw = token.replace(/\s+/g, "");
+
+  // Manejo robusto de separadores (ej: "1,234.56" vs "1.234,56")
+  let normalized = raw;
+  if (raw.includes(",") && raw.includes(".")) {
+    // Asumimos "," como miles y "." como decimal (más común en los sitios que scrapeamos)
+    normalized = raw.replace(/,/g, "");
+  } else if (raw.includes(",")) {
+    const parts = raw.split(",");
+    const last = parts[parts.length - 1] ?? "";
+    // Si termina con 1-2 dígitos, suele ser decimal "40,61"
+    if (last.length > 0 && last.length <= 2) normalized = raw.replace(",", ".");
+    else normalized = raw.replace(/,/g, "");
+  }
+
+  const n = Number.parseFloat(normalized);
+  return Number.isFinite(n) && n > 0 ? n : null;
+};
+
+const computeUsdPerM2 = (priceUSD?: number, area?: string): number | null => {
+  if (!priceUSD || priceUSD <= 0) return null;
+  const m2 = parseAreaM2(area);
+  if (!m2) return null;
+  const v = priceUSD / m2;
+  return Number.isFinite(v) && v > 0 ? v : null;
+};
+
+const formatUsdPerM2 = (value: number): string => {
+  // Para lectura rápida, lo redondeamos.
+  const rounded = Math.round(value);
+  return `$${rounded.toLocaleString()} USD/m²`;
+};
+
 // Función para renderizar HTML que carga datos desde JSON (para preview web)
 export const renderHtmlFromJson = (): string => {
   return `
@@ -213,7 +251,7 @@ export const renderHtmlFromJson = (): string => {
 
         <script>
           let currentFilter = 'all';
-          let currentSort = 'asc';
+          let currentSort = { field: 'price', order: 'asc' };
           let allListings = [];
 
           async function loadData() {
@@ -269,6 +307,39 @@ export const renderHtmlFromJson = (): string => {
             return String(text).replace(/[&<>"']/g, (m) => map[m]);
           }
 
+          function parseAreaM2(area) {
+            if (!area) return null;
+            const match = String(area).match(/[\\d.,]+/);
+            if (!match) return null;
+            const raw = match[0].replace(/\\s+/g, '');
+
+            let normalized = raw;
+            if (raw.includes(',') && raw.includes('.')) {
+              normalized = raw.replace(/,/g, '');
+            } else if (raw.includes(',')) {
+              const parts = raw.split(',');
+              const last = parts[parts.length - 1] || '';
+              if (last.length > 0 && last.length <= 2) normalized = raw.replace(',', '.');
+              else normalized = raw.replace(/,/g, '');
+            }
+
+            const n = Number.parseFloat(normalized);
+            return Number.isFinite(n) && n > 0 ? n : null;
+          }
+
+          function computeUsdPerM2(priceUSD, area) {
+            if (!priceUSD || priceUSD <= 0) return null;
+            const m2 = parseAreaM2(area);
+            if (!m2) return null;
+            const v = priceUSD / m2;
+            return Number.isFinite(v) && v > 0 ? v : null;
+          }
+
+          function formatUsdPerM2(value) {
+            const rounded = Math.round(value);
+            return '$' + rounded.toLocaleString() + ' USD/m²';
+          }
+
           function renderPage(data) {
             document.getElementById('loading').style.display = 'none';
             document.getElementById('content').style.display = 'block';
@@ -308,12 +379,18 @@ export const renderHtmlFromJson = (): string => {
             // Renderizar botones de ordenamiento
             const sortContainer = document.getElementById('sort-container');
             sortContainer.innerHTML = \`
-              <div class="filters-title">📊 Ordenar por precio:</div>
-              <button class="sort-btn active" data-sort="asc" onclick="sortProperties('asc')">
-                Menor a Mayor ↑
+              <div class="filters-title">📊 Ordenar:</div>
+              <button class="sort-btn active" data-sort="price-asc" onclick="sortProperties('price','asc')">
+                Precio (Menor → Mayor) ↑
               </button>
-              <button class="sort-btn" data-sort="desc" onclick="sortProperties('desc')">
-                Mayor a Menor ↓
+              <button class="sort-btn" data-sort="price-desc" onclick="sortProperties('price','desc')">
+                Precio (Mayor → Menor) ↓
+              </button>
+              <button class="sort-btn" data-sort="ppm2-asc" onclick="sortProperties('ppm2','asc')">
+                USD/m² (Menor → Mayor) ↑
+              </button>
+              <button class="sort-btn" data-sort="ppm2-desc" onclick="sortProperties('ppm2','desc')">
+                USD/m² (Mayor → Menor) ↓
               </button>
             \`;
 
@@ -327,9 +404,10 @@ export const renderHtmlFromJson = (): string => {
               const siteName = getSiteName(l.siteKey);
               const mainImage = l.images && l.images.length > 0 ? l.images[0] : null;
               const additionalImages = l.images && l.images.length > 1 ? l.images.slice(1, 4) : [];
+              const ppm2 = computeUsdPerM2(l.priceUSD, l.area);
               
               return \`
-                <div class="property-card" data-site="\${escapeHtml(l.siteKey)}" data-price="\${l.priceUSD ?? 0}">
+                <div class="property-card" data-site="\${escapeHtml(l.siteKey)}" data-price="\${l.priceUSD ?? 0}" data-ppm2="\${ppm2 ?? ''}">
                   \${mainImage ? \`
                   <div style="width: 100%; height: 200px; overflow: hidden; background-color: #f5f5f5;">
                     <img src="\${mainImage}" alt="\${escapeHtml(l.title || "Propiedad")}" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display='none'; this.parentElement.style.display='none';" />
@@ -357,6 +435,7 @@ export const renderHtmlFromJson = (): string => {
                     \${l.beds ? \`<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">🛏️ Dormitorios:</strong> \${l.beds}</p>\` : ""}
                     \${l.baths ? \`<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">🚿 Baños:</strong> \${l.baths}</p>\` : ""}
                     \${l.area ? \`<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">📐 Área:</strong> \${l.area}</p>\` : ""}
+                    \${ppm2 ? \`<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">📊 USD/m²:</strong> \${formatUsdPerM2(ppm2)}</p>\` : ""}
                     <a href="\${l.url}" target="_blank" style="display: inline-block; margin-top: 12px; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold; transition: background-color 0.2s;">Ver detalle →</a>
                   </div>
                 </div>
@@ -387,7 +466,7 @@ export const renderHtmlFromJson = (): string => {
             }
 
             // Aplicar ordenamiento
-            sortProperties(currentSort, false, visibleListings);
+            sortProperties(currentSort.field, currentSort.order, false, visibleListings);
 
             // Mostrar/ocultar mensaje de no resultados
             if (visibleListings.length === 0) {
@@ -402,8 +481,8 @@ export const renderHtmlFromJson = (): string => {
             }
           }
 
-          function sortProperties(sortOrder, updateFilter = true, listingsToSort = null) {
-            currentSort = sortOrder;
+          function sortProperties(field, order, updateFilter = true, listingsToSort = null) {
+            currentSort = { field, order };
             const sortButtons = document.querySelectorAll('.sort-btn');
             const listings = listingsToSort || allListings.filter(l => {
               if (currentFilter === 'all') return true;
@@ -412,7 +491,7 @@ export const renderHtmlFromJson = (): string => {
 
             // Actualizar botones de ordenamiento
             sortButtons.forEach(btn => {
-              if (btn.getAttribute('data-sort') === sortOrder) {
+              if (btn.getAttribute('data-sort') === (field + '-' + order)) {
                 btn.classList.add('active');
               } else {
                 btn.classList.remove('active');
@@ -421,9 +500,17 @@ export const renderHtmlFromJson = (): string => {
 
             // Ordenar propiedades
             const sorted = [...listings].sort((a, b) => {
+              if (field === 'ppm2') {
+                const aP = computeUsdPerM2(a.priceUSD, a.area);
+                const bP = computeUsdPerM2(b.priceUSD, b.area);
+                const vA = aP ?? Infinity;
+                const vB = bP ?? Infinity;
+                return order === 'asc' ? vA - vB : vB - vA;
+              }
+              // default: price
               const priceA = a.priceUSD ?? Infinity;
               const priceB = b.priceUSD ?? Infinity;
-              return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
+              return order === 'asc' ? priceA - priceB : priceB - priceA;
             });
 
             // Renderizar propiedades ordenadas
@@ -501,6 +588,7 @@ export const renderHtml = (listings: Listing[]): string => {
         const siteName = getSiteName(l.siteKey);
         const mainImage = l.images && l.images.length > 0 ? l.images[0] : null;
         const additionalImages = l.images && l.images.length > 1 ? l.images.slice(1, 4) : [];
+        const ppm2 = computeUsdPerM2(l.priceUSD, l.area);
         
         return `
       <div class="property-card" data-site="${escapeHtml(l.siteKey)}" data-price="${l.priceUSD ?? 0}" style="border: 1px solid #e0e0e0; padding: 0; margin-bottom: 20px; border-radius: 8px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;">
@@ -531,6 +619,7 @@ export const renderHtml = (listings: Listing[]): string => {
           ${l.beds ? `<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">🛏️ Dormitorios:</strong> ${l.beds}</p>` : ""}
           ${l.baths ? `<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">🚿 Baños:</strong> ${l.baths}</p>` : ""}
           ${l.area ? `<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">📐 Área:</strong> ${l.area}</p>` : ""}
+          ${ppm2 ? `<p style="margin: 8px 0; color: #666;"><strong style="color: #333;">📊 USD/m²:</strong> ${formatUsdPerM2(ppm2)}</p>` : ""}
           <a href="${l.url}" target="_blank" style="display: inline-block; margin-top: 12px; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px; font-weight: bold; transition: background-color 0.2s;">Ver detalle →</a>
         </div>
       </div>`;

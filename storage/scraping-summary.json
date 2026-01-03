@@ -1,12 +1,12 @@
 {
-  "timestamp": "2026-01-02T19:46:44.955Z",
+  "timestamp": "2026-01-03T17:45:16.081Z",
   "preview": {
-    "totalInPreview": 40,
+    "totalInPreview": 84,
     "previewPath": "/Users/agusmassa/Desktop/apps/bothouse/storage/email-preview.html"
   },
   "remaxrd": {
-    "scraped": 144,
-    "filtered": 29,
+    "scraped": 426,
+    "filtered": 73,
     "listings": [
       {
         "siteKey": "remaxrd",

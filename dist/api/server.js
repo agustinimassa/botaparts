@@ -5,6 +5,7 @@ import multipart from "@fastify/multipart";
 import staticFiles from "@fastify/static";
 import { loadExcelConfig } from "../config/excel.js";
 import { runJob } from "../worker/runner.js";
+import { runScrapeAndBuildPreviews } from "../worker/scrape-preview.js";
 import { logger } from "../utils/logger.js";
 const app = Fastify({ logger: false });
 app.register(multipart);
@@ -55,6 +56,213 @@ app.get("/api/properties-data", async (request, reply) => {
     }
 });
 app.get("/health", async () => ({ ok: true }));
+const scrapeState = {
+    running: false,
+    startedAt: null,
+    finishedAt: null,
+    lastOkAt: null,
+    lastError: null,
+};
+const requireAdminToken = (request) => {
+    const token = process.env.ADMIN_TOKEN;
+    if (!token)
+        return null; // auth opcional
+    const provided = String(request.headers["x-admin-token"] ?? "");
+    return provided === token ? null : "Token inválido";
+};
+app.get("/", async (_request, reply) => {
+    // UI simple para usuarios no técnicos
+    const html = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Bothouse</title>
+      <style>
+        * { box-sizing: border-box; }
+        body {
+          margin: 0;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+          background: #0b1220;
+          color: #e2e8f0;
+        }
+        .wrap { max-width: 900px; margin: 0 auto; padding: 28px 18px; }
+        .card {
+          background: rgba(255,255,255,0.06);
+          border: 1px solid rgba(148,163,184,0.2);
+          border-radius: 16px;
+          padding: 18px;
+        }
+        h1 { margin: 0 0 8px; font-size: 22px; }
+        p { margin: 8px 0; color: rgba(226,232,240,0.9); line-height: 1.5; }
+        .row { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px; }
+        button {
+          appearance: none;
+          border: 1px solid rgba(148,163,184,0.25);
+          background: rgba(37,99,235,0.9);
+          color: #fff;
+          padding: 10px 14px;
+          border-radius: 12px;
+          font-weight: 800;
+          cursor: pointer;
+        }
+        button[disabled] { opacity: 0.5; cursor: not-allowed; }
+        .secondary { background: rgba(15,23,42,0.6); }
+        .danger { background: rgba(249,115,22,0.9); }
+        .status {
+          margin-top: 14px;
+          padding: 12px 14px;
+          border-radius: 12px;
+          background: rgba(15,23,42,0.65);
+          border: 1px solid rgba(148,163,184,0.2);
+          font-size: 13px;
+          color: rgba(226,232,240,0.95);
+          line-height: 1.4;
+        }
+        .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+        input {
+          padding: 10px 12px;
+          border-radius: 12px;
+          border: 1px solid rgba(148,163,184,0.25);
+          background: rgba(2,6,23,0.6);
+          color: #e2e8f0;
+          outline: none;
+        }
+        a { color: #93c5fd; text-decoration: none; font-weight: 700; }
+        a:hover { text-decoration: underline; }
+        .small { font-size: 12px; color: rgba(226,232,240,0.7); }
+      </style>
+    </head>
+    <body>
+      <div class="wrap">
+        <div class="card">
+          <h1>🏠 Bothouse</h1>
+          <p>Este panel actualiza las propiedades (scraping) y genera dos vistas:</p>
+          <p>
+            - <strong>Vista Web</strong> (interactiva) para explorar.<br/>
+            - <strong>Vista Email</strong> (compacta) para enviar por correo.
+          </p>
+          <p class="small">Si el scraping ya está corriendo, el botón se bloquea hasta que termine.</p>
+
+          <div class="row">
+            <input id="token" placeholder="Token (opcional)" class="mono" style="min-width: 240px;" />
+            <button id="runBtn" title="Inicia el scraping y genera los previews">Actualizar propiedades</button>
+            <a id="webLink" class="secondary" href="/preview/web" target="_blank" style="padding:10px 14px; border-radius:12px; border:1px solid rgba(148,163,184,0.25); background:rgba(15,23,42,0.6);">Abrir vista web</a>
+            <a id="emailLink" class="secondary" href="/preview/email" target="_blank" style="padding:10px 14px; border-radius:12px; border:1px solid rgba(148,163,184,0.25); background:rgba(15,23,42,0.6);">Abrir vista email</a>
+          </div>
+
+          <div class="status" id="status">Cargando estado…</div>
+        </div>
+      </div>
+
+      <script>
+        const statusEl = document.getElementById('status');
+        const runBtn = document.getElementById('runBtn');
+        const tokenInput = document.getElementById('token');
+        const webLink = document.getElementById('webLink');
+        const emailLink = document.getElementById('emailLink');
+
+        const LS_KEY = 'bothouse_admin_token';
+        tokenInput.value = localStorage.getItem(LS_KEY) || '';
+        tokenInput.addEventListener('change', () => localStorage.setItem(LS_KEY, tokenInput.value));
+
+        const setLinksEnabled = (enabled) => {
+          const opacity = enabled ? '1' : '0.5';
+          const pe = enabled ? 'auto' : 'none';
+          webLink.style.opacity = opacity; webLink.style.pointerEvents = pe;
+          emailLink.style.opacity = opacity; emailLink.style.pointerEvents = pe;
+        };
+
+        async function refresh() {
+          const res = await fetch('/api/scrape/status');
+          const data = await res.json();
+          if (data.running) {
+            runBtn.disabled = true;
+            runBtn.textContent = 'Actualizando…';
+          } else {
+            runBtn.disabled = false;
+            runBtn.textContent = 'Actualizar propiedades';
+          }
+          setLinksEnabled(!!data.hasPreviews);
+          statusEl.innerHTML = [
+            '<div><strong>Estado:</strong> ' + (data.running ? 'En ejecución' : 'Inactivo') + '</div>',
+            data.startedAt ? '<div><strong>Inicio:</strong> <span class="mono">' + data.startedAt + '</span></div>' : '',
+            data.finishedAt ? '<div><strong>Fin:</strong> <span class="mono">' + data.finishedAt + '</span></div>' : '',
+            data.lastOkAt ? '<div><strong>Último OK:</strong> <span class="mono">' + data.lastOkAt + '</span></div>' : '',
+            data.lastError ? '<div style="margin-top:6px; color:#fdba74;"><strong>Último error:</strong> ' + data.lastError + '</div>' : '',
+            data.lastResult ? '<div style="margin-top:8px;"><strong>Último resultado:</strong> ' + data.lastResult.total + ' propiedades</div>' : '',
+            data.lastResult && data.lastResult.aiSummary ? '<div class="small" style="margin-top:6px;">✨ ' + data.lastResult.aiSummary + '</div>' : ''
+          ].filter(Boolean).join('');
+        }
+
+        runBtn.addEventListener('click', async () => {
+          runBtn.disabled = true;
+          runBtn.textContent = 'Iniciando…';
+          const token = tokenInput.value.trim();
+          const res = await fetch('/api/scrape/run', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(token ? { 'X-Admin-Token': token } : {}),
+            },
+            body: JSON.stringify({}),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            alert(data.error || ('Error: ' + res.status));
+          }
+          await refresh();
+        });
+
+        refresh();
+        setInterval(refresh, 2000);
+      </script>
+    </body>
+  </html>
+  `;
+    reply.type("text/html; charset=utf-8").send(html);
+});
+app.get("/api/scrape/status", async (_request, reply) => {
+    const hasWeb = fs.existsSync(path.resolve("storage", "web-preview.html"));
+    const hasEmail = fs.existsSync(path.resolve("storage", "email-preview.html"));
+    return reply.send({
+        ...scrapeState,
+        hasPreviews: hasWeb && hasEmail,
+    });
+});
+app.post("/api/scrape/run", async (request, reply) => {
+    const authErr = requireAdminToken(request);
+    if (authErr)
+        return reply.code(401).send({ error: authErr });
+    if (scrapeState.running) {
+        return reply.code(409).send({ error: "Ya hay un scraping en ejecución. Intenta nuevamente en unos minutos." });
+    }
+    scrapeState.running = true;
+    scrapeState.startedAt = new Date().toISOString();
+    scrapeState.finishedAt = null;
+    scrapeState.lastError = null;
+    void (async () => {
+        try {
+            const result = await runScrapeAndBuildPreviews();
+            scrapeState.lastResult = {
+                total: result.stats.total,
+                bySite: result.stats.bySite,
+                aiSummary: result.aiSummary,
+            };
+            scrapeState.lastOkAt = new Date().toISOString();
+        }
+        catch (err) {
+            scrapeState.lastError = err?.message ?? String(err);
+            logger.error({ err }, "Scrape/run failed");
+        }
+        finally {
+            scrapeState.running = false;
+            scrapeState.finishedAt = new Date().toISOString();
+        }
+    })();
+    return reply.code(202).send({ started: true });
+});
 // Endpoint para ver el preview del email
 app.get("/preview/email", async (request, reply) => {
     const previewPath = path.resolve("storage", "email-preview.html");

@@ -47,7 +47,7 @@ function parseExcelWorkbook(workbook, excelPath) {
     });
     // Convertir hoja filters a objeto (primera fila de datos después del header)
     const filters = {};
-    const rawFilterValues = {}; // Para debugging
+    // Nota: evitamos logs verbosos aquí (impactan CPU). Si necesitás debug, subí LOG_LEVEL=debug.
     if (filtersSheet.rowCount > 1) {
         const headerRowFilters = filtersSheet.getRow(1);
         const filterRow = filtersSheet.getRow(2);
@@ -55,12 +55,6 @@ function parseExcelWorkbook(workbook, excelPath) {
             const dataCell = filterRow.getCell(colNumber);
             const key = headerCell.value?.toString() || "";
             const value = dataCell.value;
-            // Guardar valor raw para debugging
-            rawFilterValues[key] = {
-                raw: value,
-                type: typeof value,
-                cellAddress: dataCell.address,
-            };
             if (value !== null && value !== undefined) {
                 // Convertir valores según el tipo esperado
                 if (key === "maxPriceUSD" || key === "minPriceUSD" || key === "minBeds" || key === "minBaths") {
@@ -108,47 +102,13 @@ function parseExcelWorkbook(workbook, excelPath) {
                 }
             }
         });
-        // Log detallado de los filtros cargados para debugging
-        logger.info({
-            excelFile: excelPath,
-            rawValues: rawFilterValues,
-            processedFilters: filters,
-        }, "✅ Filtros cargados desde Excel");
-        logger.info({
-            maxPriceUSD: {
-                raw: rawFilterValues.maxPriceUSD?.raw,
-                rawType: rawFilterValues.maxPriceUSD?.type,
-                processed: filters.maxPriceUSD,
-            },
-            minPriceUSD: {
-                raw: rawFilterValues.minPriceUSD?.raw,
-                processed: filters.minPriceUSD,
-            },
-            city: {
-                raw: rawFilterValues.city?.raw,
-                processed: filters.city,
-            },
-            minBeds: {
-                raw: rawFilterValues.minBeds?.raw,
-                processed: filters.minBeds,
-            },
-            minBaths: {
-                raw: rawFilterValues.minBaths?.raw,
-                processed: filters.minBaths,
-            },
-        }, "📊 Detalle de valores leídos del Excel");
         // Advertencia si maxPriceUSD no está configurado o es inválido
         if (!filters.maxPriceUSD || isNaN(filters.maxPriceUSD)) {
-            logger.warn({
-                maxPriceUSD: filters.maxPriceUSD,
-                rawValue: rawFilterValues.maxPriceUSD,
-            }, "⚠️  maxPriceUSD no está configurado o es inválido - no se filtrará por precio");
+            logger.warn({ maxPriceUSD: filters.maxPriceUSD }, "⚠️  maxPriceUSD no está configurado o es inválido - no se filtrará por precio");
         }
         else {
-            logger.info({
-                maxPriceUSD: filters.maxPriceUSD,
-                rawValue: rawFilterValues.maxPriceUSD?.raw,
-            }, `💰 Precio máximo configurado: $${filters.maxPriceUSD.toLocaleString()} USD`);
+            // Log opcional solo para debug
+            logger.debug({ maxPriceUSD: filters.maxPriceUSD }, `💰 Precio máximo configurado: $${filters.maxPriceUSD.toLocaleString()} USD`);
         }
     }
     // Convertir hoja notifications a objeto (primera fila de datos después del header)
@@ -187,7 +147,7 @@ function parseExcelWorkbook(workbook, excelPath) {
             }
         });
     }
-    logger.info({ fuentes: sources.length, emails: notifications.emails?.length ?? 0 }, "Config Excel cargada");
+    logger.debug({ fuentes: sources.length, emails: notifications.emails?.length ?? 0 }, "Config Excel cargada");
     return { sources, filters, notifications };
 }
 /**
@@ -197,7 +157,7 @@ function parseExcelWorkbook(workbook, excelPath) {
 export const loadExcelConfig = async (excelPath) => {
     // Si se proporciona un excelPath explícito (para testing), usarlo directamente
     if (excelPath) {
-        logger.info({ path: excelPath }, "📄 Usando archivo Excel proporcionado explícitamente");
+        logger.debug({ path: excelPath }, "Usando archivo Excel proporcionado explícitamente");
         if (!fs.existsSync(excelPath)) {
             throw new Error(`No se encontró el archivo Excel en ${excelPath}`);
         }
@@ -220,27 +180,30 @@ export const loadExcelConfig = async (excelPath) => {
     try {
         if (googleSheetUrl) {
             // Opción 1: Google Sheet vía URL (más simple, no requiere credenciales si el sheet es público)
-            logger.info({ googleSheetUrl }, "Descargando Google Sheet desde URL...");
+            logger.debug({ googleSheetUrl }, "Descargando Google Sheet desde URL...");
             finalExcelPath = await downloadPublishedSheet(googleSheetUrl, defaultConfigPath);
-            // Verificar fecha de modificación del archivo descargado
-            const stats = await fs.promises.stat(finalExcelPath);
-            logger.info({
-                path: finalExcelPath,
-                downloadedAt: stats.mtime.toISOString(),
-                size: `${(stats.size / 1024).toFixed(2)} KB`
-            }, "✅ Google Sheet descargado exitosamente");
+            // Log opcional solo para debug
+            if (logger.isLevelEnabled?.("debug")) {
+                const stats = await fs.promises.stat(finalExcelPath);
+                logger.debug({
+                    path: finalExcelPath,
+                    downloadedAt: stats.mtime.toISOString(),
+                    size: `${(stats.size / 1024).toFixed(2)} KB`,
+                }, "Google Sheet descargado");
+            }
         }
         else if (googleDriveFileId) {
             // Opción 2: Google Drive con API (requiere credenciales)
-            logger.info("Descargando Excel desde Google Drive usando API...");
+            logger.debug("Descargando Excel desde Google Drive usando API...");
             finalExcelPath = await downloadExcelFromDrive(googleDriveFileId, defaultConfigPath);
-            // Verificar fecha de modificación del archivo descargado
-            const stats = await fs.promises.stat(finalExcelPath);
-            logger.info({
-                path: finalExcelPath,
-                downloadedAt: stats.mtime.toISOString(),
-                size: `${(stats.size / 1024).toFixed(2)} KB`
-            }, "✅ Excel descargado desde Google Drive");
+            if (logger.isLevelEnabled?.("debug")) {
+                const stats = await fs.promises.stat(finalExcelPath);
+                logger.debug({
+                    path: finalExcelPath,
+                    downloadedAt: stats.mtime.toISOString(),
+                    size: `${(stats.size / 1024).toFixed(2)} KB`,
+                }, "Excel descargado desde Google Drive");
+            }
         }
     }
     catch (error) {
@@ -255,13 +218,15 @@ export const loadExcelConfig = async (excelPath) => {
         throw new Error(`No se encontró el archivo Excel en ${finalExcelPath}`);
     }
     // Log del archivo que se está usando
-    const fileStats = await fs.promises.stat(finalExcelPath);
-    logger.info({
-        filePath: finalExcelPath,
-        fileSize: `${(fileStats.size / 1024).toFixed(2)} KB`,
-        lastModified: fileStats.mtime.toISOString(),
-        source: googleSheetUrl ? "Google Sheets (descargado)" : "Google Drive (descargado)",
-    }, "📄 Leyendo archivo Excel");
+    if (logger.isLevelEnabled?.("debug")) {
+        const fileStats = await fs.promises.stat(finalExcelPath);
+        logger.debug({
+            filePath: finalExcelPath,
+            fileSize: `${(fileStats.size / 1024).toFixed(2)} KB`,
+            lastModified: fileStats.mtime.toISOString(),
+            source: googleSheetUrl ? "Google Sheets (descargado)" : "Google Drive (descargado)",
+        }, "Leyendo archivo Excel");
+    }
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(finalExcelPath);
     return parseExcelWorkbook(workbook, finalExcelPath);

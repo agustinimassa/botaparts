@@ -5,18 +5,20 @@ export const applyFilters = (listings, filters) => {
     if (maxPrice && isNaN(maxPrice)) {
         logger.warn({ maxPriceUSD: filters.maxPriceUSD }, "maxPriceUSD no es un número válido, ignorando filtro");
     }
-    // Log de propiedades que exceden el precio máximo (para debugging)
-    const overPriceLimit = listings.filter(l => maxPrice && !isNaN(maxPrice) && l.priceUSD && l.priceUSD > maxPrice);
-    if (overPriceLimit.length > 0 && maxPrice) {
-        logger.info({
-            maxPriceUSD: maxPrice,
-            overLimit: overPriceLimit.length,
-            examples: overPriceLimit.slice(0, 5).map(l => ({
-                title: l.title,
-                price: l.priceUSD,
-                siteKey: l.siteKey,
-            })),
-        }, "⚠️  Propiedades que exceden el precio máximo (serán filtradas)");
+    // Log de propiedades que exceden el precio máximo (solo debug, evita costo en prod)
+    if (logger.isLevelEnabled?.("debug") && maxPrice && !isNaN(maxPrice)) {
+        const overPriceLimit = listings.filter((l) => l.priceUSD && l.priceUSD > maxPrice);
+        if (overPriceLimit.length > 0) {
+            logger.debug({
+                maxPriceUSD: maxPrice,
+                overLimit: overPriceLimit.length,
+                examples: overPriceLimit.slice(0, 5).map((l) => ({
+                    title: l.title,
+                    price: l.priceUSD,
+                    siteKey: l.siteKey,
+                })),
+            }, "Propiedades que exceden el precio máximo (serán filtradas)");
+        }
     }
     const filtered = listings.filter((l) => {
         // Filtro de precio máximo
@@ -57,7 +59,7 @@ export const applyFilters = (listings, filters) => {
         }
         return true;
     });
-    logger.info({
+    logger.debug({
         total: listings.length,
         filtered: filtered.length,
         maxPriceUSD: maxPrice,

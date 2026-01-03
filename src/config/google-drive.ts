@@ -255,7 +255,7 @@ export const downloadPublishedSheet = async (
       // - Pero sí permite bajar CSV por pestaña via gid.
       // Solución robusta: leer pubhtml, detectar automáticamente los gid de las pestañas requeridas,
       // descargar CSVs y reconstruir un XLSX local (para que exceljs lo lea igual que siempre).
-      logger.info(
+      logger.debug(
         { publishedId, originalUrl: publishedUrl },
         "Google Sheet publicado detectado. Reconstruyendo XLSX desde CSVs (auto-detect gid)...",
       );
@@ -287,7 +287,7 @@ export const downloadPublishedSheet = async (
       for (const sheetName of REQUIRED_SHEETS) {
         const gid = gidMap[sheetName]!;
         const csvUrl = buildPublishedCsvUrl(publishedId, gid);
-        logger.info({ sheetName, gid, csvUrl }, "Descargando CSV de pestaña publicada...");
+        logger.debug({ sheetName, gid, csvUrl }, "Descargando CSV de pestaña publicada...");
         const csvRes = await fetch(csvUrl, { redirect: "follow", headers: DEFAULT_HEADERS });
         if (!csvRes.ok) {
           const txt = await csvRes.text().catch(() => "");
@@ -314,12 +314,12 @@ export const downloadPublishedSheet = async (
         await fs.promises.unlink(finalOutputPath);
       }
       await workbook.xlsx.writeFile(finalOutputPath);
-      logger.info({ path: finalOutputPath }, "XLSX reconstruido exitosamente desde publish-to-web");
+      logger.debug({ path: finalOutputPath }, "XLSX reconstruido exitosamente desde publish-to-web");
       return finalOutputPath;
     } else {
       // Para URLs directas, usar export?format=xlsx
       exportUrl = buildDriveExportUrl(fileId!, gidFromQuery);
-      logger.info(
+      logger.debug(
         { fileId, gid: gidFromQuery ?? GOOGLE_SHEETS_DEFAULT_GID, exportUrl, originalUrl: publishedUrl },
         "Descargando Google Sheet por File ID (export?format=xlsx)...",
       );
@@ -342,7 +342,7 @@ export const downloadPublishedSheet = async (
     const buffer = await response.arrayBuffer();
     await fs.promises.writeFile(finalOutputPath, Buffer.from(buffer));
 
-    logger.info({ path: finalOutputPath }, "Google Sheet descargado exitosamente como Excel");
+    logger.debug({ path: finalOutputPath }, "Google Sheet descargado exitosamente como Excel");
 
     return finalOutputPath;
   } catch (error: any) {
@@ -405,7 +405,7 @@ export const downloadExcelFromDrive = async (
     const drive = google.drive({ version: "v3", auth });
 
     // Descargar el archivo
-    logger.info({ fileId }, "Descargando archivo Excel desde Google Drive...");
+    logger.debug({ fileId }, "Descargando archivo Excel desde Google Drive...");
 
     const response = await drive.files.get(
       {
@@ -430,7 +430,7 @@ export const downloadExcelFromDrive = async (
 
     await new Promise<void>((resolve, reject) => {
       writeStream.on("finish", () => {
-        logger.info({ path: finalOutputPath }, "Archivo Excel descargado exitosamente");
+        logger.debug({ path: finalOutputPath }, "Archivo Excel descargado exitosamente");
         resolve();
       });
       writeStream.on("error", reject);

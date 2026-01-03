@@ -16,21 +16,22 @@ const registry = {
 export const runJob = async (config: ExcelConfig): Promise<Listing[]> => {
   const startTime = Date.now();
   
-  // Log inicial de configuración
-  logger.info({
-    sources: config.sources.map(s => ({
-      siteKey: s.siteKey,
-      url: s.url,
-      maxPages: s.maxPages,
-      active: s.active,
-    })),
-    filters: config.filters,
-    notifications: {
-      emails: config.notifications.emails?.length || 0,
-      whatsappNumbers: config.notifications.whatsappNumbers?.length || 0,
-      subjectTemplate: config.notifications.subjectTemplate,
+  // Log inicial (solo debug para evitar overhead en prod)
+  logger.debug(
+    {
+      sources: config.sources.map((s) => ({
+        siteKey: s.siteKey,
+        maxPages: s.maxPages,
+        active: s.active,
+      })),
+      filters: config.filters,
+      notifications: {
+        emails: config.notifications.emails?.length || 0,
+        whatsappNumbers: config.notifications.whatsappNumbers?.length || 0,
+      },
     },
-  }, "🚀 Iniciando job de scraping con configuración");
+    "Iniciando job de scraping",
+  );
 
   const all: Listing[] = [];
   const sourceResults: Record<string, number> = {};
@@ -50,12 +51,15 @@ export const runJob = async (config: ExcelConfig): Promise<Listing[]> => {
   const fresh = filterNewListings(filtered);
   
   if (!fresh.length) {
-    logger.info({
-      totalScraped: all.length,
-      afterFilters: filtered.length,
-      afterDedup: fresh.length,
-      duration: `${((Date.now() - startTime) / 1000).toFixed(2)}s`,
-    }, "✅ Job completado: Sin nuevos resultados");
+    logger.debug(
+      {
+        totalScraped: all.length,
+        afterFilters: filtered.length,
+        afterDedup: fresh.length,
+        duration: `${((Date.now() - startTime) / 1000).toFixed(2)}s`,
+      },
+      "Job completado: sin nuevos resultados",
+    );
     return [];
   }
 
@@ -87,30 +91,22 @@ export const runJob = async (config: ExcelConfig): Promise<Listing[]> => {
   await sendWhatsappSummary(config.notifications.whatsappNumbers || [], freshWithAi);
   appendSent(freshWithAi);
   
-  // Log final con resumen completo
+  // Log final (solo debug)
   const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-  logger.info({
-    summary: {
+  logger.debug(
+    {
       duration: `${duration}s`,
-      sources: {
-        total: config.sources.length,
-        results: sourceResults,
-      },
+      sources: sourceResults,
       listings: {
         scraped: all.length,
         afterFilters: filtered.length,
         afterDedup: fresh.length,
-        new: fresh.length,
       },
     },
-    filters: config.filters,
-    notifications: {
-      emails: config.notifications.emails || [],
-      whatsappNumbers: config.notifications.whatsappNumbers || [],
-      sent: true,
-    },
-  }, "✅ Job completado exitosamente");
+    "Job completado",
+  );
   
   return freshWithAi;
 };
+
 

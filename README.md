@@ -41,6 +41,10 @@ Las variables disponibles son:
 - `AI_MODEL` (opcional): modelo a usar para análisis (default: `llama-3.1-8b-instant`).
 - `AI_ANALYSIS_MAX_LISTINGS` (opcional): máximo de listings a considerar en el análisis AI (default: `120`).
 
+### Producción (recomendado)
+- `ADMIN_TOKEN` (opcional, recomendado): si está definido, protege el endpoint `POST /api/scrape/run` y el HOME te permite ingresarlo para ejecutar scraping.
+- `ALLOW_INDEXING` (opcional): si es `true`, permite indexación. Por defecto el servidor envía headers para bloquear indexación y sirve `robots.txt` con `Disallow: /`.
+
 ### Variables SMTP (requeridas para emails)
 - `SMTP_HOST` (requerido): Host del servidor SMTP
   - Gmail: `smtp.gmail.com`

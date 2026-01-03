@@ -7,10 +7,10 @@ loadEnv();
 const run = async () => {
     const startTime = Date.now();
     try {
-        logger.info("📥 Cargando configuración desde Excel...");
+        logger.debug("Cargando configuración desde Excel...");
         const config = await loadExcelConfig();
         // Log de configuración cargada
-        logger.info({
+        logger.debug({
             sources: config.sources.map(s => ({
                 id: s.id,
                 siteKey: s.siteKey,
@@ -24,11 +24,11 @@ const run = async () => {
                 whatsappNumbers: config.notifications.whatsappNumbers?.length || 0,
                 subjectTemplate: config.notifications.subjectTemplate,
             },
-        }, "✅ Configuración cargada exitosamente");
+        }, "Configuración cargada");
         const results = await runJob(config);
         // Log final con resumen completo
         const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-        logger.info({
+        logger.debug({
             execution: {
                 duration: `${duration}s`,
                 timestamp: new Date().toISOString(),
@@ -44,7 +44,7 @@ const run = async () => {
             results: {
                 newListings: results.length,
             },
-        }, "🎉 Script ejecutado exitosamente");
+        }, "Script ejecutado");
         console.log("\n" + "=".repeat(60));
         console.log("✅ EJECUCIÓN COMPLETADA");
         console.log("=".repeat(60));

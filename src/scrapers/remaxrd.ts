@@ -24,7 +24,7 @@ export const scrapeRemaxRD = async (
   }, 120000); // 2 minutos máximo
   
   try {
-    logger.info({ url: config.url }, "Iniciando navegación a RE/MAX RD");
+    logger.debug({ url: config.url }, "Iniciando navegación a RE/MAX RD");
     
     // Usar Promise.race para tener un timeout más estricto
     try {
@@ -32,7 +32,7 @@ export const scrapeRemaxRD = async (
         page.goto(config.url, { waitUntil: "load", timeout: 20000 }),
         new Promise((_, reject) => setTimeout(() => reject(new Error("Navigation timeout")), 20000))
       ]);
-      logger.info({ url: config.url }, "Página cargada, esperando contenido...");
+      logger.debug({ url: config.url }, "Página cargada, esperando contenido...");
     } catch (gotoErr: any) {
       logger.warn({ err: gotoErr, url: config.url }, "Timeout en page.goto, continuando con domcontentloaded...");
       // Intentar con domcontentloaded como fallback
@@ -41,7 +41,7 @@ export const scrapeRemaxRD = async (
           page.goto(config.url, { waitUntil: "domcontentloaded", timeout: 15000 }),
           new Promise((_, reject) => setTimeout(() => reject(new Error("DOM timeout")), 15000))
         ]);
-        logger.info({ url: config.url }, "Página cargada con domcontentloaded");
+        logger.debug({ url: config.url }, "Página cargada con domcontentloaded");
       } catch (domErr: any) {
         logger.error({ err: domErr, url: config.url }, "❌ Error crítico al cargar la página - abortando scraper");
         throw new Error(`No se pudo cargar la página después de múltiples intentos: ${domErr.message}`);
@@ -66,13 +66,13 @@ export const scrapeRemaxRD = async (
         bodyTextLength: document.body.textContent?.length || 0,
       };
     });
-    logger.info({ initialCheck }, "Estado inicial de la página RE/MAX RD");
+    logger.debug({ initialCheck }, "Estado inicial de la página RE/MAX RD");
     
     // Esperar a que las propiedades carguen con múltiples estrategias
     try {
       // Intentar esperar el selector con timeout más largo para carga inicial (10 segundos)
       await page.waitForSelector('a[href*="/propiedad/"]', { timeout: 10000 });
-      logger.info("Selector 'a[href*=\"/propiedad/\"]' encontrado");
+      logger.debug("Selector 'a[href*=\"/propiedad/\"]' encontrado");
     } catch (err) {
       // Si falla, esperar a que aparezca cualquier contenido relacionado con propiedades
       logger.warn({ err, initialCheck }, "Timeout esperando propiedades, intentando estrategia alternativa...");
@@ -88,7 +88,7 @@ export const scrapeRemaxRD = async (
           },
           { timeout: 10000 }
         );
-        logger.info("Contenido de propiedades detectado mediante waitForFunction");
+        logger.debug("Contenido de propiedades detectado mediante waitForFunction");
         // Dar tiempo adicional para que se rendericen las propiedades
         await page.waitForTimeout(2000);
       } catch (altErr) {
@@ -112,7 +112,7 @@ export const scrapeRemaxRD = async (
     const extractProperties = async (): Promise<number> => {
       // Verificar cuántos links hay antes de extraer
       const linkCount = await page.evaluate(() => document.querySelectorAll('a[href*="/propiedad/"]').length);
-      logger.info({ linkCount }, "Links de propiedades encontrados antes de extraer");
+      logger.debug({ linkCount }, "Links de propiedades encontrados antes de extraer");
       
       if (linkCount === 0) {
         logger.warn("No se encontraron links de propiedades en la página");
@@ -270,7 +270,7 @@ export const scrapeRemaxRD = async (
         newCount++;
         logger.debug({ listing: { title: listing.title, price: listing.priceUSD, url: listing.url } }, "Propiedad agregada");
       }
-      logger.info({ newCount, skippedCount, total: listings.length }, "Propiedades extraídas en esta iteración");
+      logger.debug({ newCount, skippedCount, total: listings.length }, "Propiedades extraídas en esta iteración");
       return newCount;
     };
     
@@ -308,11 +308,11 @@ export const scrapeRemaxRD = async (
         
         // Si no se encontraron nuevas propiedades, detener la paginación
         if (newCount === 0 || listings.length === previousCount) {
-          logger.info({ page: pageNum + 1, reason: 'No more properties found' }, "Deteniendo paginación RE/MAX RD");
+          logger.debug({ page: pageNum + 1, reason: 'No more properties found' }, "Deteniendo paginación RE/MAX RD");
           break;
         }
         
-        logger.info({ page: pageNum + 1, newProperties: newCount, total: listings.length }, "Página procesada RE/MAX RD");
+        logger.debug({ page: pageNum + 1, newProperties: newCount, total: listings.length }, "Página procesada RE/MAX RD");
       } catch (pageErr) {
         logger.warn({ err: pageErr, page: pageNum + 1 }, "Error al procesar página en RE/MAX RD, continuando...");
         // Continuar con la siguiente página aunque haya un error
@@ -320,7 +320,7 @@ export const scrapeRemaxRD = async (
       }
     }
     
-    logger.info({ count: listings.length, pages: maxPages, site: config.siteKey }, "Propiedades encontradas en RE/MAX RD");
+    logger.debug({ count: listings.length, pages: maxPages, site: config.siteKey }, "Propiedades encontradas en RE/MAX RD");
   } catch (err: any) {
     logger.error({ err, url: config.url, message: err.message }, "❌ Error en scraper RE/MAX RD");
     // Retornar lista vacía en caso de error para no bloquear otros scrapers

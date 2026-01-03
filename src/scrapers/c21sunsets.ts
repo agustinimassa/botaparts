@@ -40,7 +40,7 @@ export const scrapeC21Sunsets = async (
   }, 120000); // 2 minutos máximo
   
   try {
-    logger.info({ url: config.url, headless }, "Iniciando navegación a C21 Sunsets");
+    logger.debug({ url: config.url, headless }, "Iniciando navegación a C21 Sunsets");
     
     // Usar Promise.race para tener un timeout más estricto
     const navigationPromise = page.goto(config.url, { 
@@ -54,7 +54,7 @@ export const scrapeC21Sunsets = async (
     
     try {
       await Promise.race([navigationPromise, timeoutPromise]);
-      logger.info({ url: config.url }, "Página cargada, esperando contenido...");
+      logger.debug({ url: config.url }, "Página cargada, esperando contenido...");
     } catch (gotoErr: any) {
       logger.warn({ err: gotoErr, url: config.url }, "Timeout en page.goto, intentando domcontentloaded...");
       // Intentar con domcontentloaded como fallback (más rápido)
@@ -63,7 +63,7 @@ export const scrapeC21Sunsets = async (
           page.goto(config.url, { waitUntil: "domcontentloaded", timeout: 15000 }),
           new Promise((_, reject) => setTimeout(() => reject(new Error("DOM timeout")), 15000))
         ]);
-        logger.info({ url: config.url }, "Página cargada con domcontentloaded");
+        logger.debug({ url: config.url }, "Página cargada con domcontentloaded");
       } catch (domErr: any) {
         logger.error({ err: domErr, url: config.url }, "❌ Error crítico al cargar la página - abortando scraper");
         throw new Error(`No se pudo cargar la página después de múltiples intentos: ${domErr.message}`);
@@ -88,7 +88,7 @@ export const scrapeC21Sunsets = async (
         bodyTextLength: document.body.textContent?.length || 0,
       };
     });
-    logger.info({ initialCheck }, "Estado inicial de la página C21 Sunsets");
+    logger.debug({ initialCheck }, "Estado inicial de la página C21 Sunsets");
     
     // Esperar a que las propiedades carguen con múltiples estrategias (con timeout estricto)
     try {
@@ -97,7 +97,7 @@ export const scrapeC21Sunsets = async (
         page.waitForSelector('article', { timeout: 8000 }),
         new Promise((_, reject) => setTimeout(() => reject(new Error("Selector timeout")), 8000))
       ]);
-      logger.info("Selector 'article' encontrado");
+      logger.debug("Selector 'article' encontrado");
     } catch (err) {
       // Si falla, esperar a que aparezca cualquier contenido relacionado con propiedades
       logger.warn({ err, initialCheck }, "Timeout esperando 'article', intentando estrategia alternativa...");
@@ -116,7 +116,7 @@ export const scrapeC21Sunsets = async (
           ),
           new Promise((_, reject) => setTimeout(() => reject(new Error("WaitFunction timeout")), 8000))
         ]);
-        logger.info("Contenido de propiedades detectado mediante waitForFunction");
+        logger.debug("Contenido de propiedades detectado mediante waitForFunction");
         // Dar tiempo adicional para que se rendericen los artículos (con timeout)
         await Promise.race([
           page.waitForTimeout(2000),
@@ -144,7 +144,7 @@ export const scrapeC21Sunsets = async (
     const extractProperties = async (): Promise<number> => {
       // Verificar cuántos artículos hay antes de extraer
       const articleCount = await page.evaluate(() => document.querySelectorAll('article').length);
-      logger.info({ articleCount }, "Artículos encontrados antes de extraer propiedades");
+      logger.debug({ articleCount }, "Artículos encontrados antes de extraer propiedades");
       
       if (articleCount === 0) {
         logger.warn("No se encontraron artículos en la página");
@@ -361,7 +361,7 @@ export const scrapeC21Sunsets = async (
         newCount++;
         logger.debug({ listing: { title: listing.title, price: listing.priceUSD, url: listing.url } }, "Propiedad agregada");
       }
-      logger.info({ newCount, skippedCount, total: listings.length }, "Propiedades extraídas en esta iteración");
+      logger.debug({ newCount, skippedCount, total: listings.length }, "Propiedades extraídas en esta iteración");
       return newCount;
     };
     
@@ -423,7 +423,7 @@ export const scrapeC21Sunsets = async (
         });
         
         if (!showMoreButton.found) {
-          logger.info({ page: pageNum + 1, reason: 'No more button found' }, "Deteniendo paginación C21 Sunsets");
+          logger.debug({ page: pageNum + 1, reason: 'No more button found' }, "Deteniendo paginación C21 Sunsets");
           break;
         }
         
@@ -481,11 +481,11 @@ export const scrapeC21Sunsets = async (
         
         // Si no se encontraron nuevas propiedades, detener la paginación
         if (newCount === 0 || listings.length === previousCount) {
-          logger.info({ page: pageNum + 1, reason: 'No more properties found' }, "Deteniendo paginación C21 Sunsets");
+          logger.debug({ page: pageNum + 1, reason: 'No more properties found' }, "Deteniendo paginación C21 Sunsets");
           break;
         }
         
-        logger.info({ page: pageNum + 1, newProperties: newCount, total: listings.length }, "Página procesada C21 Sunsets");
+        logger.debug({ page: pageNum + 1, newProperties: newCount, total: listings.length }, "Página procesada C21 Sunsets");
       } catch (pageErr) {
         logger.warn({ err: pageErr, page: pageNum + 1 }, "Error al procesar página en C21 Sunsets, continuando...");
         // Continuar con la siguiente página aunque haya un error
@@ -493,7 +493,7 @@ export const scrapeC21Sunsets = async (
       }
     }
     
-    logger.info({ count: listings.length, pages: maxPages, site: config.siteKey }, "Propiedades encontradas en C21 Sunsets");
+    logger.debug({ count: listings.length, pages: maxPages, site: config.siteKey }, "Propiedades encontradas en C21 Sunsets");
   } catch (err: any) {
     logger.error({ err, url: config.url, message: err.message }, "❌ Error en scraper C21 Sunsets");
     // Retornar lista vacía en caso de error para no bloquear otros scrapers

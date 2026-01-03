@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: bothouse
+    runtime: docker
+    plan: free
+    autoDeploy: true
+    dockerfilePath: Dockerfile.chromium
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PLAYWRIGHT_HEADLESS
+        value: "true"
+      - key: LOG_LEVEL
+        value: warn
+      # Recomendado: proteger POST /api/scrape/run
+      # - key: ADMIN_TOKEN
+      #   sync: false
+      #
+      # AI (opcional)
+      # - key: GROQ_API_KEY
+      #   sync: false
+      # - key: AI_MODEL
+      #   value: llama-3.1-8b-instant
+      #
+      # SMTP (si vas a enviar emails)
+      # - key: SMTP_HOST
+      #   sync: false
+      # - key: SMTP_PORT
+      #   value: "587"
+      # - key: SMTP_USER
+      #   sync: false
+      # - key: SMTP_PASS
+      #   sync: false
+      #
+      # Google Sheets/Drive (requerido)
+      # - key: GOOGLE_SHEET_URL
+      #   sync: false
+
+

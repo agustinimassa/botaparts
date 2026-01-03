@@ -11,12 +11,50 @@ Scraper inmobiliario modular en Node/TS. Lee configuración desde Excel, usa Pla
 npm install
 ```
 
+## Docker (recomendado para producción y para evitar problemas con Playwright)
+
+### Levantar en local con Docker Compose
+1) Crear `.env` (podés partir de `env.example`). Render no usa `.env`, pero en local con Docker es cómodo.
+2) Ejecutar:
+
+```bash
+docker compose up --build
+```
+
+3) Abrir:
+- Home: `http://localhost:3000/`
+- Vista web: `http://localhost:3000/preview/web`
+- Vista email: `http://localhost:3000/preview/email`
+
+**Nota:** `./storage` se monta como volumen para persistir previews y JSONs entre reinicios.
+
+### Levantar en local con Docker (sin Compose)
+
+```bash
+docker build -t bothouse .
+docker run --rm -p 3000:3000 --env-file .env -v "$(pwd)/storage:/app/storage" bothouse
+```
+
+## Deploy en Render (Docker)
+
+Recomendado para Playwright (Chromium) porque evita problemas de instalación de browsers/deps del sistema.
+
+1) Crear un **Web Service** y elegir **Deploy an existing repo**.
+2) En Runtime/Environment, seleccionar **Docker** (Render detecta el `Dockerfile`).
+3) Configurar variables de entorno en Render (ver sección Configuración).
+4) Abrir la URL del servicio y usar el HOME (`/`) para ejecutar scraping.
+
+**Persistencia en free tier:** Render Free no tiene disco persistente. Si el contenedor se reinicia, `storage/` puede perderse.
+Para este caso de uso (1–2 veces al día) suele ser OK porque podés volver a ejecutar “Actualizar propiedades”.
+
 ## Scripts
 - `npm run dev`: servidor Fastify con reload (ts-node + nodemon).
 - `npm run build`: compila a `dist/`.
 - `npm start`: ejecuta `dist/`.
 - `npm run scrape:site`: corre el job manualmente leyendo el Excel.
 - `npm run ai:analyze`: analiza `storage/properties-data.json` con Groq (free tier).
+- `npm run build:previews`: regenera `web-preview.html` y `email-preview.html` desde `storage/properties-data.json` (sin scraping).
+- `npm run test:email`: envía un email de prueba usando el HTML compacto.
 - `npm run lint` / `npm run format`: lint/format.
 
 ## Configuración (.env)

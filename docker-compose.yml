@@ -1,0 +1,20 @@
+services:
+  bothouse:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      # Compose no inyecta PORT automáticamente, lo definimos para local.
+      - PORT=3000
+      - NODE_ENV=production
+      - PLAYWRIGHT_HEADLESS=true
+      # Optional overrides:
+      - LOG_LEVEL=warn
+    volumes:
+      # Persist previews/data locally (recommended)
+      - ./storage:/app/storage
+

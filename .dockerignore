@@ -1,0 +1,24 @@
+node_modules
+dist
+.git
+.DS_Store
+npm-debug.log
+yarn-error.log
+
+# Persistencia local via volumen (compose). Evitar inflar el build context.
+storage
+
+node_modules
+dist
+.git
+.DS_Store
+npm-debug.log
+yarn-error.log
+storage/*.xlsx
+storage/*.html
+storage/*.json
+storage/*.db
+storage/**/*.db
+.env
+.env.local
+

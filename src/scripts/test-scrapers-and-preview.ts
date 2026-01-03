@@ -5,7 +5,7 @@ import { applyFilters } from "../filters/applyFilters.js";
 import { loadExcelConfig } from "../config/excel.js";
 import fs from "fs";
 import path from "path";
-import { renderHtml, renderHtmlFromJson } from "../notifications/email/index.js";
+import { renderEmailCompact, renderHtmlFromJson } from "../notifications/email/index.js";
 import { analyzeMarketWithAi } from "../ai/market.js";
 
 // Cargar variables de entorno (.env y .env.local)
@@ -110,6 +110,9 @@ async function testScrapers() {
       return;
     }
 
+    let webPreviewPath: string | null = null;
+    let emailPreviewPath: string | null = null;
+
     // (Opcional) Análisis con AI para destacar oportunidades/outliers en el HTML
     const aiEnabled = process.env.AI_ANALYSIS_ENABLED !== "false" && !!process.env.GROQ_API_KEY;
     let aiSummary: string | null = null;
@@ -180,17 +183,24 @@ async function testScrapers() {
     );
     console.log(`✅ Datos guardados en JSON: ${dataPath}`);
 
-    // Generar HTML estático que cargará el JSON dinámicamente
-    const emailHtml = renderHtmlFromJson();
+    // Generar 2 previews:
+    // - Web (grande, interactivo) => web-preview.html (para publicar luego como página)
+    // - Email (compacto)          => email-preview.html
 
-    // Guardar preview
-    const previewPath = path.resolve("storage", "email-preview.html");
-    await fs.promises.mkdir(path.dirname(previewPath), { recursive: true });
-    await fs.promises.writeFile(previewPath, emailHtml);
+    const webHtml = renderHtmlFromJson();
+    webPreviewPath = path.resolve("storage", "web-preview.html");
+    await fs.promises.mkdir(path.dirname(webPreviewPath), { recursive: true });
+    await fs.promises.writeFile(webPreviewPath, webHtml);
 
-    console.log(`✅ Preview generado: ${previewPath}`);
-    console.log(`📊 Total de propiedades en preview: ${allListings.length}`);
-    console.log(`\n💡 Abre el archivo en tu navegador para ver cómo se verá el email`);
+    const emailHtml = renderEmailCompact(listingsWithAi as any, aiSummary);
+    emailPreviewPath = path.resolve("storage", "email-preview.html");
+    await fs.promises.mkdir(path.dirname(emailPreviewPath), { recursive: true });
+    await fs.promises.writeFile(emailPreviewPath, emailHtml);
+
+    console.log(`✅ Preview WEB generado: ${webPreviewPath}`);
+    console.log(`✅ Preview EMAIL generado: ${emailPreviewPath}`);
+    console.log(`📊 Total de propiedades en preview: ${listingsWithAi.length}`);
+    console.log(`\n💡 Web: abre web-preview.html (interactivo) • Email: abre email-preview.html (compacto)`);
 
     // También generar un resumen JSON
     const summaryPath = path.resolve("storage", "scraping-summary.json");
@@ -198,7 +208,7 @@ async function testScrapers() {
       timestamp: new Date().toISOString(),
       preview: {
         totalInPreview: allListings.length,
-        previewPath,
+        previewPath: emailPreviewPath,
       },
     };
     
@@ -243,7 +253,8 @@ async function testScrapers() {
     console.log(`     - Total antes de filtros: ${totalScraped} propiedades`);
     console.log(`     - Total después de filtros: ${totalFiltered} propiedades`);
     console.log(`     - Propiedades filtradas: ${totalScraped - totalFiltered}`);
-    console.log(`     - Preview generado: ${previewPath}`);
+    console.log(`     - Preview EMAIL: ${emailPreviewPath ?? "N/D"}`);
+    console.log(`     - Preview WEB: ${webPreviewPath ?? "N/D"}`);
     console.log("=".repeat(60) + "\n");
   } catch (err) {
     console.error("❌ Error al generar preview:", err);

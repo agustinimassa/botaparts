@@ -48,6 +48,23 @@ app.get("/preview/email", async (request, reply) => {
   }
 });
 
+// Endpoint para ver el preview WEB (página grande/interactiva)
+app.get("/preview/web", async (request, reply) => {
+  const previewPath = path.resolve("storage", "web-preview.html");
+  try {
+    if (!fs.existsSync(previewPath)) {
+      return reply
+        .code(404)
+        .send({ error: "Preview web no encontrado. Ejecuta 'npm run test:scrapers' primero." });
+    }
+    const html = await fs.promises.readFile(previewPath, "utf-8");
+    reply.type("text/html").send(html);
+  } catch (err) {
+    logger.error({ err }, "Error al leer preview web");
+    return reply.code(500).send({ error: "Error al leer preview web" });
+  }
+});
+
 // Endpoint para listar todos los HTMLs disponibles
 app.get("/preview/list", async (request, reply) => {
   const storagePath = path.resolve("storage");

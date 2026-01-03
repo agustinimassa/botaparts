@@ -1,7 +1,12 @@
 import nodemailer from "nodemailer";
 import { Listing } from "../../models/types.js";
 
-export const sendEmailSummary = async (to: string[], subject: string, listings: Listing[]) => {
+export const sendEmailSummary = async (
+  to: string[],
+  subject: string,
+  listings: Listing[],
+  opts?: { aiSummary?: string | null },
+) => {
   if (!to.length) return;
   const transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
@@ -13,13 +18,96 @@ export const sendEmailSummary = async (to: string[], subject: string, listings: 
     },
   });
 
-  const html = renderHtml(listings);
+  const html = renderEmailCompact(listings, opts?.aiSummary ?? null);
   await transporter.sendMail({
     from: process.env.SMTP_FROM || process.env.SMTP_USER,
     to,
     subject,
     html,
   });
+};
+
+export const renderEmailCompact = (listings: Listing[], aiSummary?: string | null): string => {
+  const safeSummary = aiSummary && aiSummary.trim() ? aiSummary.trim() : null;
+  const sorted = [...listings].sort((a, b) => (a.priceUSD ?? Infinity) - (b.priceUSD ?? Infinity));
+  const top = sorted.slice(0, 20);
+
+  const rows = top
+    .map((l) => {
+      const ppm2 = computeUsdPerM2(l.priceUSD, l.area);
+      const aiLine = l.ai?.label
+        ? `<div style="margin-top:6px; font-size: 12px; color:#0f172a;">
+             <span style="${
+               l.ai.kind === "oportunidad"
+                 ? "background:#16a34a;"
+                 : l.ai.kind === "alerta"
+                   ? "background:#f97316;"
+                   : "background:#2563eb;"
+             } color:#fff; padding:2px 8px; border-radius:999px; font-weight:800; font-size:11px; letter-spacing:.4px; text-transform:uppercase;" title="${escapeHtml(l.ai.tooltip || "")}">
+               AI • ${escapeHtml(l.ai.label)}
+             </span>
+             <span style="color:#334155;">${escapeHtml(l.ai.tooltip || "")}</span>
+           </div>`
+        : "";
+
+      return `
+        <tr>
+          <td style="padding:14px 12px; border-bottom:1px solid #e2e8f0;">
+            <div style="font-weight:800; color:#0f172a; font-size:14px; line-height:1.25;">
+              <a href="${escapeHtml(l.url)}" target="_blank" style="color:#2563eb; text-decoration:none;">${escapeHtml(l.title || "Sin título")}</a>
+            </div>
+            <div style="margin-top:6px; color:#334155; font-size:13px;">
+              <strong>Precio:</strong> ${l.priceUSD ? `$${l.priceUSD.toLocaleString()} USD` : "N/D"}
+              ${ppm2 ? ` • <strong>USD/m²:</strong> ${escapeHtml(formatUsdPerM2(ppm2))}` : ""}
+            </div>
+            <div style="margin-top:4px; color:#475569; font-size:13px;">
+              <strong>Ubicación:</strong> ${escapeHtml(l.location || "N/D")}
+              ${l.beds ? ` • <strong>🛏</strong> ${l.beds}` : ""}
+              ${l.baths ? ` • <strong>🚿</strong> ${l.baths}` : ""}
+              ${l.area ? ` • <strong>m²:</strong> ${escapeHtml(l.area)}` : ""}
+            </div>
+            ${aiLine}
+          </td>
+        </tr>
+      `;
+    })
+    .join("");
+
+  return `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Nuevas Propiedades</title>
+      </head>
+      <body style="margin:0; padding:0; background:#f1f5f9; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;">
+        <div style="max-width:720px; margin:0 auto; padding:18px;">
+          <div style="background:#ffffff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden;">
+            <div style="padding:18px 18px 10px 18px; border-bottom:1px solid #e2e8f0;">
+              <div style="font-size:18px; font-weight:900; color:#0f172a;">🏠 Nuevas propiedades</div>
+              <div style="margin-top:6px; color:#475569; font-size:13px;">Total: <strong>${listings.length}</strong> • Mostrando: <strong>${top.length}</strong></div>
+              ${
+                safeSummary
+                  ? `<div style="margin-top:10px; padding:10px 12px; border-radius:10px; background:#0f172a; color:#e2e8f0; font-size:13px; line-height:1.35;">
+                       <strong style="color:#fff;">✨ AI:</strong> ${escapeHtml(safeSummary)}
+                     </div>`
+                  : ""
+              }
+            </div>
+            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+              <tbody>
+                ${rows || `<tr><td style="padding:18px; color:#475569;">No hay propiedades para mostrar.</td></tr>`}
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top:10px; color:#64748b; font-size:12px; text-align:center;">
+            Generado por Bothouse • ${new Date().toISOString()}
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
 };
 
 const getSiteName = (siteKey: string): string => {

@@ -15,6 +15,7 @@
     "generate:excel": "tsx src/scripts/generate-example-excel.ts",
     "test:scrapers": "tsx src/scripts/test-scrapers-and-preview.ts",
     "test:scrapers:h": "PLAYWRIGHT_HEADLESS=false tsx src/scripts/test-scrapers-and-preview.ts",
+    "test:email": "tsx src/scripts/test-email.ts",
     "test": "echo \"tests pendientes\" && exit 0"
   },
   "author": "",

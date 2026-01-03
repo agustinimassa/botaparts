@@ -6,6 +6,7 @@ import { sendWhatsappSummary } from "../notifications/whatsapp/index.js";
 import { logger } from "../utils/logger.js";
 import { scrapeRemaxRD } from "../scrapers/remaxrd.js";
 import { scrapeC21Sunsets } from "../scrapers/c21sunsets.js";
+import { analyzeMarketWithAi } from "../ai/market.js";
 
 const registry = {
   remaxrd: scrapeRemaxRD,
@@ -58,13 +59,33 @@ export const runJob = async (config: ExcelConfig): Promise<Listing[]> => {
     return [];
   }
 
+  // (Opcional) Enriquecer con AI antes de enviar
+  const aiEnabled = process.env.AI_ANALYSIS_ENABLED !== "false" && !!process.env.GROQ_API_KEY;
+  let aiSummary: string | null = null;
+  let freshWithAi: Listing[] = fresh;
+  if (aiEnabled) {
+    try {
+      const analysis = await analyzeMarketWithAi(fresh);
+      aiSummary = analysis.summary;
+      const byKey = analysis.byKey || {};
+      freshWithAi = fresh.map((l) => {
+        const key = `${l.siteKey}:${l.listingId}`;
+        const ai = byKey[key];
+        return ai ? { ...l, ai } : l;
+      });
+    } catch (err: any) {
+      logger.warn({ err }, "Falló análisis AI (se continúa sin AI)");
+    }
+  }
+
   await sendEmailSummary(
     config.notifications.emails || [],
     config.notifications.subjectTemplate || "Nuevas propiedades",
-    fresh,
+    freshWithAi,
+    { aiSummary },
   );
-  await sendWhatsappSummary(config.notifications.whatsappNumbers || [], fresh);
-  appendSent(fresh);
+  await sendWhatsappSummary(config.notifications.whatsappNumbers || [], freshWithAi);
+  appendSent(freshWithAi);
   
   // Log final con resumen completo
   const duration = ((Date.now() - startTime) / 1000).toFixed(2);
@@ -90,6 +111,6 @@ export const runJob = async (config: ExcelConfig): Promise<Listing[]> => {
     },
   }, "✅ Job completado exitosamente");
   
-  return fresh;
+  return freshWithAi;
 };
 

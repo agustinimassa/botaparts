@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-01-03T18:21:07.083Z",
-  "aiSummary": "Análisis del mercado inmobiliario en Bavaro",
+  "timestamp": "2026-01-03T18:31:15.871Z",
+  "aiSummary": "Análisis del mercado inmobiliario en la región de Punta Cana",
   "listings": [
     {
       "siteKey": "remaxrd",
@@ -20,7 +20,7 @@
       "ai": {
         "kind": "alerta",
         "label": "Apartamento Norah Beach",
-        "tooltip": "Precio alto en comparación con la mediana"
+        "tooltip": "Precio alto en comparación con la mediana del mercado"
       }
     },
     {
@@ -39,9 +39,9 @@
         "Exclusivo"
       ],
       "ai": {
-        "kind": "info",
-        "label": "Apartamento Amueblado",
-        "tooltip": "USD/m² cercano a la mediana"
+        "kind": "oportunidad",
+        "label": "Apartamento Amueblado Bavaro Condominio Selene",
+        "tooltip": "Precio bajo en comparación con la mediana del mercado"
       }
     },
     {
@@ -60,9 +60,9 @@
         "Exclusivo"
       ],
       "ai": {
-        "kind": "oportunidad",
-        "label": "Apartamento Nuevo",
-        "tooltip": "Precio bajo en comparación con la mediana"
+        "kind": "info",
+        "label": "Apartamento Nuevo Venta Dormitorios Punta Cana",
+        "tooltip": "Precio competitivo en su zona"
       }
     },
     {
@@ -79,8 +79,8 @@
       ],
       "ai": {
         "kind": "info",
-        "label": "Apartamento Beach Residences",
-        "tooltip": "USD/m² cercano a la mediana"
+        "label": "Apartamento Beach Residencesbavaro White Sand",
+        "tooltip": "Precio cercano a la mediana del mercado"
       }
     },
     {
@@ -96,9 +96,9 @@
         "https://images.remaxrd.com/media/pictures/watermark/small/13822-1719613664-e8f69386d7e566293e43c0865f2be37a.jpg"
       ],
       "ai": {
-        "kind": "info",
-        "label": "Nuevo Apartamento",
-        "tooltip": "USD/m² muy alto"
+        "kind": "alerta",
+        "label": "Nuevo Apartamento Dormitorios Zona Turistica",
+        "tooltip": "Precio muy alto en comparación con la mediana del mercado"
       }
     },
     {
@@ -115,9 +115,99 @@
         "https://images.remaxrd.com/media/pictures/watermark/small/13810-1722867468-c2e1048ae0ca93fad29bde493a4a87d0.jpg"
       ],
       "ai": {
+        "kind": "alerta",
+        "label": "Proyecto de Apartamento",
+        "tooltip": "Precio alto en comparación con la mediana del mercado"
+      }
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "211165",
+      "title": "Apartamento Venta White Sands Bavaro 211165",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-venta-en-white-sands-bavaro-211165?city=bavaro",
+      "priceUSD": 150000,
+      "beds": 2,
+      "baths": 2,
+      "area": "98.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13179-1756598359-c1f5d28a79806be08581dd5ebbe9e2eb.png"
+      ],
+      "ai": {
+        "kind": "info",
+        "label": "Apartamento Venta White Sands Bavaro",
+        "tooltip": "Precio cercano a la mediana del mercado"
+      }
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "210849",
+      "title": "Descubre Este Hermoso Apartamento Pasos Playa",
+      "url": "https://remaxrd.com/propiedad/apartamento/descubre-este-hermoso-apartamento-a-pasos-de-la-playa-210849?city=bavaro",
+      "priceUSD": 150000,
+      "beds": 2,
+      "baths": 2,
+      "area": "85.78 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/12919-1755789085-f930eab426ab196050bc5bf6f8750010.webp"
+      ],
+      "ai": {
+        "kind": "alerta",
+        "label": "Descubre Este Hermoso Apartamento Pasos Playa",
+        "tooltip": "Precio alto en comparación con la mediana del mercado"
+      }
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "200330",
+      "title": "Apartamento Bavaro Higuey Habitaciones 200330",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-bavaro-higuey-2-habitaciones-200330?city=hig%C3%BCey",
+      "priceUSD": 103000,
+      "beds": 2,
+      "baths": 2,
+      "area": "71.07 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13453-1736977472-d9319ce360129c163b68e6500ed8ab04.jpg"
+      ],
+      "ai": {
+        "kind": "info",
+        "label": "Apartamento Bavaro Higuey Habitaciones",
+        "tooltip": "Precio cercano a la mediana del mercado"
+      }
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "169442",
+      "title": "Apartamento Residencial Macao 169442",
+      "url": "https://remaxrd.com/propiedad/apartamento/apartamento-en-residencial-macao-169442?city=hig%C3%BCey",
+      "priceUSD": 95000,
+      "beds": 2,
+      "baths": 2,
+      "area": "120.00 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13806-1673892025-8955aa5f0f7a1fc323298a6294a6f5ca.jpg"
+      ],
+      "ai": {
+        "kind": "oportunidad",
+        "label": "Apartamento Residencial Macao",
+        "tooltip": "Precio bajo en comparación con la mediana del mercado"
+      }
+    },
+    {
+      "siteKey": "remaxrd",
+      "listingId": "161455",
+      "title": "Proyecto de Apartamento",
+      "url": "https://remaxrd.com/propiedad/proyecto-de-apartamento/el-cortecito-bavaro-161455?city=bavaro",
+      "priceUSD": 160000,
+      "beds": 2,
+      "baths": 2,
+      "area": "125.81 m²",
+      "images": [
+        "https://images.remaxrd.com/media/pictures/watermark/small/13428-1679868942-ec81ab4121abcf176f6e7f713edbb29b.jpg"
+      ],
+      "ai": {
         "kind": "info",
         "label": "Proyecto de Apartamento",
-        "tooltip": "USD/m² cercano a la mediana"
+        "tooltip": "Precio competitivo en su zona"
       }
     },
     {
@@ -133,16 +223,16 @@
         "https://c21sunsets.com/images/udx/1159241/w470/1753220249081863.jpg?vno=1753220632"
       ],
       "ai": {
-        "kind": "info",
-        "label": "Exclusive Villa",
-        "tooltip": "Datos incompletos, precio y USD/m² desconocidos"
+        "kind": "alerta",
+        "label": "Exclusive Villa In Tracadero",
+        "tooltip": "Falta de información sobre el precio"
       }
     }
   ],
   "stats": {
-    "total": 7,
+    "total": 12,
     "bySite": {
-      "remaxrd": 6,
+      "remaxrd": 11,
       "c21sunsets": 1
     }
   }

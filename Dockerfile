@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.46.1-jammy AS build
+FROM mcr.microsoft.com/playwright:v1.57.0-jammy AS build
 
 WORKDIR /app
 
@@ -12,7 +12,7 @@ COPY src ./src
 RUN npm run build && npm prune --omit=dev
 
 
-FROM mcr.microsoft.com/playwright:v1.46.1-jammy AS runner
+FROM mcr.microsoft.com/playwright:v1.57.0-jammy AS runner
 
 WORKDIR /app
 

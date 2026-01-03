@@ -32,6 +32,7 @@ Thumbs.db
 # Storage (archivos generados)
 storage/*.xlsx
 storage/*.json
+storage/*.html
 !storage/.gitkeep
 
 # Playwright

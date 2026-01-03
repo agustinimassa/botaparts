@@ -1,46 +1,13 @@
 {
-  "timestamp": "2026-01-03T17:45:16.081Z",
+  "timestamp": "2026-01-03T18:16:29.041Z",
   "preview": {
-    "totalInPreview": 84,
+    "totalInPreview": 12,
     "previewPath": "/Users/agusmassa/Desktop/apps/bothouse/storage/email-preview.html"
   },
   "remaxrd": {
-    "scraped": 426,
-    "filtered": 73,
+    "scraped": 384,
+    "filtered": 11,
     "listings": [
-      {
-        "siteKey": "remaxrd",
-        "listingId": "214276",
-        "title": "Penthouse Lujo Jacuzzi Cerca Playa Dominicus",
-        "url": "https://remaxrd.com/propiedad/apartamento/penthouse-de-lujo-con-jacuzzi-cerca-de-playa-dominicus-214276?city=bayahibe",
-        "priceUSD": 355000,
-        "location": "DOMINICUS, BAYAHIBE",
-        "beds": 2,
-        "baths": 2,
-        "area": "173.89 m²",
-        "images": [
-          "https://images.remaxrd.com/media/pictures/watermark/small/R-214276-1764955586-2b29d544-838c-43fd-a390-365d9d20767f.webp"
-        ],
-        "badges": [
-          "Exclusivo"
-        ]
-      },
-      {
-        "siteKey": "remaxrd",
-        "listingId": "215198",
-        "title": "Apartamento Hab Cocotal Golf Country Club",
-        "url": "https://remaxrd.com/propiedad/apartamento/apartamento-de-2-hab-en-cocotal-golf-country-club-215198?city=bavaro",
-        "priceUSD": 200000,
-        "beds": 2,
-        "baths": 2,
-        "area": "110.00 m²",
-        "images": [
-          "https://images.remaxrd.com/media/pictures/watermark/small/D-2254-1763756297-8d4a9d40-f6bf-477a-afc0-d2463bd756f7.jpg"
-        ],
-        "badges": [
-          "Exclusivo"
-        ]
-      },
       {
         "siteKey": "remaxrd",
         "listingId": "214560",
@@ -56,12 +23,44 @@
         "badges": [
           "Exclusivo"
         ]
+      },
+      {
+        "siteKey": "remaxrd",
+        "listingId": "214487",
+        "title": "Apartamento Amueblado Bavaro Condominio Selene 214487",
+        "url": "https://remaxrd.com/propiedad/apartamento/apartamento-amueblado-en-bavaro-condominio-selene-v-214487?city=bavaro",
+        "priceUSD": 129000,
+        "beds": 2,
+        "baths": 2,
+        "area": "89.09 m²",
+        "images": [
+          "https://images.remaxrd.com/media/pictures/watermark/small/R-214487-1761881671-baf5d3fb-2777-4d0d-83a2-4e78d1b67530.png"
+        ],
+        "badges": [
+          "Exclusivo"
+        ]
+      },
+      {
+        "siteKey": "remaxrd",
+        "listingId": "185602",
+        "title": "Apartamento Nuevo Venta Dormitorios Punta Cana",
+        "url": "https://remaxrd.com/propiedad/apartamento/apartamento-nuevo-en-venta-2-dormitorios-en-punta-cana-185602?city=bavaro",
+        "priceUSD": 145000,
+        "beds": 2,
+        "baths": 2,
+        "area": "98.18 m²",
+        "images": [
+          "https://images.remaxrd.com/media/pictures/watermark/small/13405-1740772653-9156c9a7b55105e974c9a24b83050800.jpg"
+        ],
+        "badges": [
+          "Exclusivo"
+        ]
       }
     ]
   },
   "c21sunsets": {
     "scraped": 12,
-    "filtered": 11,
+    "filtered": 1,
     "listings": [
       {
         "siteKey": "c21sunsets",
@@ -74,33 +73,6 @@
         "area": "826 m²",
         "images": [
           "https://c21sunsets.com/images/udx/1159241/w470/1753220249081863.jpg?vno=1753220632"
-        ]
-      },
-      {
-        "siteKey": "c21sunsets",
-        "listingId": "1157892",
-        "title": "Elegant Penthouse Fully Furnished Near The Beach",
-        "url": "https://c21sunsets.com/es/d/elegant-penthouse-fully-furnished-near-the-beach-condominio-apartamento-en-venta-bayahibe-la-altagracia-1157892",
-        "priceUSD": 499000,
-        "location": "Bayahibe (La Altagracia)",
-        "beds": 4,
-        "baths": 4.5,
-        "area": "229 m²",
-        "images": [
-          "https://c21sunsets.com/images/udx/1157892/w470/1741643861114405.jpg?vno=1741794004"
-        ]
-      },
-      {
-        "siteKey": "c21sunsets",
-        "listingId": "1154499",
-        "title": "Beach Front Condos",
-        "url": "https://c21sunsets.com/es/d/beach-front-condos-condominio-apartamento-en-venta-bayahibe-la-altagracia-1154499",
-        "priceUSD": 399000,
-        "location": "Bayahibe (La Altagracia)",
-        "beds": 2,
-        "baths": 2,
-        "images": [
-          "https://c21sunsets.com/images/udx/1154499/w470/1723691172547224.jpg?vno=1723691611"
         ]
       }
     ]

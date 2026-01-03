@@ -16,6 +16,7 @@ npm install
 - `npm run build`: compila a `dist/`.
 - `npm start`: ejecuta `dist/`.
 - `npm run scrape:site`: corre el job manualmente leyendo el Excel.
+- `npm run ai:analyze`: analiza `storage/properties-data.json` con Groq (free tier).
 - `npm run lint` / `npm run format`: lint/format.
 
 ## Configuración (.env)
@@ -32,6 +33,12 @@ Las variables disponibles son:
 - `PLAYWRIGHT_HEADLESS` (opcional, default: `true`): Modo headless de Playwright
   - `true` = navegador sin interfaz gráfica (más rápido, recomendado para producción)
   - `false` = navegador visible (útil para debugging y desarrollo)
+
+### Variables Groq (AI) (opcional)
+- `GROQ_API_KEY` (opcional): API key de Groq Cloud. Se usa para `npm run ai:analyze` (free tier con rate limits).
+- `AI_ANALYSIS_ENABLED` (opcional): habilita/deshabilita el análisis AI dentro de `npm run test:scrapers` (default: habilitado si existe `GROQ_API_KEY`).
+- `AI_MODEL` (opcional): modelo a usar para análisis (default: `llama-3.1-8b-instant`).
+- `AI_ANALYSIS_MAX_LISTINGS` (opcional): máximo de listings a considerar en el análisis AI (default: `120`).
 
 ### Variables SMTP (requeridas para emails)
 - `SMTP_HOST` (requerido): Host del servidor SMTP

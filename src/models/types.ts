@@ -11,6 +11,11 @@ export type Listing = {
   area?: string;
   description?: string;
   badges?: string[]; // Badges o destaques como "Nuevo listado", "Oportunidad", etc.
+  ai?: {
+    kind: "oportunidad" | "alerta" | "info";
+    label: string;
+    tooltip: string;
+  };
   rawData?: Record<string, unknown>;
 };
 

@@ -6,6 +6,7 @@ import { loadExcelConfig } from "../config/excel.js";
 import fs from "fs";
 import path from "path";
 import { renderHtml, renderHtmlFromJson } from "../notifications/email/index.js";
+import { analyzeMarketWithAi } from "../ai/market.js";
 
 // Cargar variables de entorno (.env y .env.local)
 loadEnv();
@@ -109,9 +110,37 @@ async function testScrapers() {
       return;
     }
 
+    // (Opcional) Análisis con AI para destacar oportunidades/outliers en el HTML
+    const aiEnabled = process.env.AI_ANALYSIS_ENABLED !== "false" && !!process.env.GROQ_API_KEY;
+    let aiSummary: string | null = null;
+    let aiByKey: Record<string, any> = {};
+    if (aiEnabled) {
+      console.log("✨ Ejecutando análisis de mercado con AI (Groq)...");
+      try {
+        const analysis = await analyzeMarketWithAi(allListings as any);
+        aiSummary = analysis.summary;
+        aiByKey = analysis.byKey || {};
+
+        const aiOutPath = path.resolve("storage", "ai-market-analysis.json");
+        await fs.promises.mkdir(path.dirname(aiOutPath), { recursive: true });
+        await fs.promises.writeFile(aiOutPath, JSON.stringify(analysis, null, 2));
+        console.log(`✅ AI analysis guardado: ${aiOutPath}`);
+      } catch (err: any) {
+        console.warn("⚠️  Falló el análisis AI (se continúa sin AI):", err?.message ?? err);
+      }
+    } else {
+      console.log("ℹ️  AI deshabilitado (setea GROQ_API_KEY y AI_ANALYSIS_ENABLED!=false para activarlo)");
+    }
+
+    const listingsWithAi = allListings.map((l: any) => {
+      const key = `${l.siteKey}:${l.listingId}`;
+      const ai = aiByKey[key];
+      return ai ? { ...l, ai } : l;
+    });
+
     // Agrupar propiedades por sitio para estadísticas
     const listingsBySite: Record<string, typeof allListings> = {};
-    allListings.forEach((listing) => {
+    listingsWithAi.forEach((listing) => {
       if (!listingsBySite[listing.siteKey]) {
         listingsBySite[listing.siteKey] = [];
       }
@@ -138,9 +167,10 @@ async function testScrapers() {
       dataPath,
       JSON.stringify({
         timestamp: new Date().toISOString(),
-        listings: allListings,
+        aiSummary,
+        listings: listingsWithAi,
         stats: {
-          total: allListings.length,
+          total: listingsWithAi.length,
           bySite: siteStats.reduce((acc, stat) => {
             acc[stat.siteKey] = stat.count;
             return acc;

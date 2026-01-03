@@ -11,6 +11,7 @@
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,json,md}\"",
     "scrape:site": "tsx src/scripts/run-site.ts",
+    "ai:analyze": "tsx src/scripts/analyze-departamentos.ts",
     "generate:excel": "tsx src/scripts/generate-example-excel.ts",
     "test:scrapers": "tsx src/scripts/test-scrapers-and-preview.ts",
     "test:scrapers:h": "PLAYWRIGHT_HEADLESS=false tsx src/scripts/test-scrapers-and-preview.ts",

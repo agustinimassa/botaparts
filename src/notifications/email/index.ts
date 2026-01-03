@@ -208,6 +208,76 @@ export const renderHtmlFromJson = (): string => {
             transform: translateY(-4px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.15);
           }
+          .ai-bar {
+            margin: 14px 0 0 0;
+            padding: 12px 14px;
+            border-radius: 8px;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 13px;
+            line-height: 1.4;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+          }
+          .ai-bar strong {
+            color: #ffffff;
+          }
+          .property-card.ai-oportunidad {
+            border: 2px solid rgba(34, 197, 94, 0.9);
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.12), 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 10px;
+          }
+          .property-card.ai-alerta {
+            border: 2px solid rgba(249, 115, 22, 0.95);
+            box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.12), 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 10px;
+          }
+          .ai-badge {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,0.18);
+            cursor: help;
+            white-space: nowrap;
+          }
+          .ai-badge.ai-oportunidad {
+            background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+            color: #ffffff;
+          }
+          .ai-badge.ai-alerta {
+            background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);
+            color: #ffffff;
+          }
+          .ai-badge.ai-info {
+            background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);
+            color: #ffffff;
+          }
+          .ai-badge[data-tooltip]:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 50%;
+            top: calc(100% + 10px);
+            transform: translateX(-50%);
+            width: min(360px, 70vw);
+            background: rgba(2, 6, 23, 0.95);
+            color: #e2e8f0;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            z-index: 50;
+            text-transform: none;
+            letter-spacing: 0;
+            font-weight: 600;
+            line-height: 1.35;
+            white-space: normal;
+          }
           .property-card.hidden {
             display: none;
           }
@@ -242,6 +312,7 @@ export const renderHtmlFromJson = (): string => {
           <div class="error" id="error" style="display: none;"></div>
           <div id="content" style="display: none;">
             <div class="stats-bar" id="stats-bar"></div>
+            <div class="ai-bar" id="ai-bar" style="display:none;"></div>
             <div class="filters-container" id="filters-container"></div>
             <div class="sort-container" id="sort-container"></div>
             <div class="no-results" id="no-results">No hay propiedades que coincidan con el filtro seleccionado.</div>
@@ -346,6 +417,7 @@ export const renderHtmlFromJson = (): string => {
 
             const stats = data.stats;
             const listings = data.listings;
+            const aiSummary = data.aiSummary;
 
             // Renderizar estadísticas
             const statsBar = document.getElementById('stats-bar');
@@ -361,6 +433,15 @@ export const renderHtmlFromJson = (): string => {
                 </div>
               \`).join('')}
             \`;
+
+            // Renderizar barra de AI (si existe)
+            const aiBar = document.getElementById('ai-bar');
+            if (aiSummary && typeof aiSummary === 'string' && aiSummary.trim()) {
+              aiBar.innerHTML = '<strong>✨ AI (análisis rápido):</strong> ' + escapeHtml(aiSummary);
+              aiBar.style.display = 'block';
+            } else {
+              aiBar.style.display = 'none';
+            }
 
             // Renderizar botones de filtro
             const filtersContainer = document.getElementById('filters-container');
@@ -405,9 +486,12 @@ export const renderHtmlFromJson = (): string => {
               const mainImage = l.images && l.images.length > 0 ? l.images[0] : null;
               const additionalImages = l.images && l.images.length > 1 ? l.images.slice(1, 4) : [];
               const ppm2 = computeUsdPerM2(l.priceUSD, l.area);
+              const ai = l.ai;
+              const aiKind = ai && ai.kind ? String(ai.kind) : null;
+              const aiClass = aiKind ? ('ai-' + aiKind) : '';
               
               return \`
-                <div class="property-card" data-site="\${escapeHtml(l.siteKey)}" data-price="\${l.priceUSD ?? 0}" data-ppm2="\${ppm2 ?? ''}">
+                <div class="property-card \${aiClass}" data-site="\${escapeHtml(l.siteKey)}" data-price="\${l.priceUSD ?? 0}" data-ppm2="\${ppm2 ?? ''}">
                   \${mainImage ? \`
                   <div style="width: 100%; height: 200px; overflow: hidden; background-color: #f5f5f5;">
                     <img src="\${mainImage}" alt="\${escapeHtml(l.title || "Propiedad")}" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display='none'; this.parentElement.style.display='none';" />
@@ -416,6 +500,11 @@ export const renderHtmlFromJson = (): string => {
                     <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
                       <h3 style="margin: 0; color: #333; font-size: 20px; flex: 1; min-width: 200px;">\${escapeHtml(l.title || "Sin título")}</h3>
                       <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+                        \${ai && ai.label ? \`
+                          <span class="ai-badge \${aiClass}" data-tooltip="\${escapeHtml(ai.tooltip || '')}">
+                            AI • \${escapeHtml(ai.label)}
+                          </span>
+                        \` : ''}
                         \${l.badges && l.badges.length > 0 ? l.badges.map(badge => \`
                           <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);">\${escapeHtml(badge)}</span>
                         \`).join('') : ''}
@@ -589,9 +678,31 @@ export const renderHtml = (listings: Listing[]): string => {
         const mainImage = l.images && l.images.length > 0 ? l.images[0] : null;
         const additionalImages = l.images && l.images.length > 1 ? l.images.slice(1, 4) : [];
         const ppm2 = computeUsdPerM2(l.priceUSD, l.area);
+        const ai = l.ai;
+        const aiKind = ai?.kind ? String(ai.kind) : null;
+        const aiBorder =
+          aiKind === "oportunidad"
+            ? "border: 2px solid rgba(34,197,94,0.9); box-shadow: 0 0 0 4px rgba(34,197,94,0.12), 0 2px 4px rgba(0,0,0,0.1);"
+            : aiKind === "alerta"
+              ? "border: 2px solid rgba(249,115,22,0.95); box-shadow: 0 0 0 4px rgba(249,115,22,0.12), 0 2px 4px rgba(0,0,0,0.1);"
+              : "";
+        const aiBadge =
+          ai?.label
+            ? `
+              <span title="${escapeHtml(ai.tooltip || "")}" style="${
+                aiKind === "oportunidad"
+                  ? "background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);"
+                  : aiKind === "alerta"
+                    ? "background: linear-gradient(135deg, #f97316 0%, #fb923c 100%);"
+                    : "background: linear-gradient(135deg, #2563eb 0%, #60a5fa 100%);"
+              } color: #ffffff; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; border: 1px solid rgba(255,255,255,0.18); white-space: nowrap; cursor: help;">
+                AI • ${escapeHtml(ai.label)}
+              </span>
+            `
+            : "";
         
         return `
-      <div class="property-card" data-site="${escapeHtml(l.siteKey)}" data-price="${l.priceUSD ?? 0}" style="border: 1px solid #e0e0e0; padding: 0; margin-bottom: 20px; border-radius: 8px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s, box-shadow 0.2s;">
+      <div class="property-card" data-site="${escapeHtml(l.siteKey)}" data-price="${l.priceUSD ?? 0}" style="border: 1px solid #e0e0e0; padding: 0; margin-bottom: 20px; border-radius: 8px; background-color: #ffffff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; ${aiBorder}">
         ${mainImage ? `
         <div style="width: 100%; height: 200px; overflow: hidden; background-color: #f5f5f5;">
           <img src="${mainImage}" alt="${escapeHtml(l.title || "Propiedad")}" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.style.display='none'; this.parentElement.style.display='none';" />
@@ -600,6 +711,7 @@ export const renderHtml = (listings: Listing[]): string => {
           <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
             <h3 style="margin: 0; color: #333; font-size: 20px; flex: 1; min-width: 200px;">${escapeHtml(l.title || "Sin título")}</h3>
             <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+              ${aiBadge}
               ${l.badges && l.badges.length > 0 ? l.badges.map(badge => `
                 <span style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #ffffff; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);">${escapeHtml(badge)}</span>
               `).join('') : ''}

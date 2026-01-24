@@ -29,4 +29,7 @@ RUN mkdir -p /app/storage
 
 EXPOSE 3000
 
-CMD ["node", "dist/index.js"]
+# 🚀 OPTIMIZACIÓN: Limitar memoria de Node.js y habilitar GC manual
+# --max-old-space-size=450: Límite de heap para 512MB de RAM
+# --expose-gc: Permite garbage collection manual
+CMD ["node", "--expose-gc", "--max-old-space-size=450", "dist/index.js"]

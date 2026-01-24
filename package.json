@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "nodemon --watch src --exec tsx src/index.ts",
     "build": "tsc -p tsconfig.json",
-    "start": "node dist/index.js",
+    "start": "node --expose-gc --max-old-space-size=450 dist/index.js",
+    "start:production": "NODE_ENV=production node --expose-gc --max-old-space-size=450 dist/index.js",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,json,md}\"",
     "scrape:site": "tsx src/scripts/run-site.ts",

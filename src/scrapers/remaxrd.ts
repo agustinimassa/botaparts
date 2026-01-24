@@ -1,17 +1,18 @@
-import { chromium } from "playwright";
+import { BrowserContext } from "playwright";
 import { Filters, Listing, SourceConfig } from "../models/types.js";
 import { logger } from "../utils/logger.js";
+import { browserPool } from "./browser-pool.js";
 
 export const scrapeRemaxRD = async (
   config: SourceConfig,
   filters: Filters,
 ): Promise<Listing[]> => {
-  const headless = process.env.PLAYWRIGHT_HEADLESS !== 'false';
-  const browser = await chromium.launch({ 
-    headless,
-    timeout: 60000, // 60 segundos máximo
+  // Usar contexto del pool compartido (mucho más eficiente en memoria)
+  const context = await browserPool.createContext({
+    blockImages: false, // RE/MAX necesita imágenes
+    blockStyles: false,
+    blockFonts: true,
   });
-  const context = await browser.newContext();
   const page = await context.newPage();
   const listings: Listing[] = [];
   const maxPages = config.maxPages || 5;
@@ -20,7 +21,8 @@ export const scrapeRemaxRD = async (
   // Timeout global para toda la operación de scraping
   const globalTimeout = setTimeout(() => {
     logger.error({ url: config.url }, "⏱️  Timeout global alcanzado (2 minutos), cerrando scraper");
-    browser.close().catch(() => {});
+    page.close().catch(() => {});
+    browserPool.closeContext(context).catch(() => {});
   }, 120000); // 2 minutos máximo
   
   try {
@@ -329,19 +331,18 @@ export const scrapeRemaxRD = async (
     // Limpiar timeout global
     clearTimeout(globalTimeout);
     
-    // Cerrar contexto y browser de forma segura
+    // Cerrar página y contexto (navegador se mantiene abierto en el pool)
     try {
-      await context.close().catch(() => {});
-      await browser.close().catch(() => {});
-      logger.debug("Navegador cerrado correctamente");
+      await page.close().catch(() => {});
+      await browserPool.closeContext(context);
+      logger.debug("Contexto RE/MAX cerrado correctamente");
     } catch (closeErr) {
-      logger.warn({ err: closeErr }, "Error al cerrar navegador (ignorado)");
-      // Forzar cierre si falla el cierre normal
-      try {
-        await browser.close();
-      } catch {
-        // Ignorar errores al forzar cierre
-      }
+      logger.warn({ err: closeErr }, "Error al cerrar contexto (ignorado)");
+    }
+    
+    // Forzar garbage collection si está disponible
+    if (global.gc) {
+      global.gc();
     }
   }
   return listings;

@@ -1,30 +1,17 @@
-import { chromium } from "playwright";
+import { BrowserContext } from "playwright";
 import { Filters, Listing, SourceConfig } from "../models/types.js";
 import { logger } from "../utils/logger.js";
+import { browserPool } from "./browser-pool.js";
 
 export const scrapeC21Sunsets = async (
   config: SourceConfig,
   filters: Filters,
 ): Promise<Listing[]> => {
-  const headless = process.env.PLAYWRIGHT_HEADLESS !== 'false';
-  const browser = await chromium.launch({ 
-    headless,
-    // Configuraciones adicionales para evitar bloqueos de Cloudflare
-    args: [
-      '--disable-blink-features=AutomationControlled',
-      '--disable-dev-shm-usage',
-      '--no-sandbox',
-    ],
-    // Timeout global para evitar que se quede colgado
-    timeout: 60000, // 60 segundos máximo
-  });
-  
-  // Crear contexto con user agent y headers configurados
-  const context = await browser.newContext({
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    extraHTTPHeaders: {
-      'Accept-Language': 'es-ES,es;q=0.9,en;q=0.8',
-    },
+  // Usar contexto del pool compartido (mucho más eficiente en memoria)
+  const context = await browserPool.createContext({
+    blockImages: false, // C21 necesita imágenes
+    blockStyles: false,
+    blockFonts: true,
   });
   
   const page = await context.newPage();
@@ -36,11 +23,12 @@ export const scrapeC21Sunsets = async (
   // Timeout global para toda la operación de scraping
   const globalTimeout = setTimeout(() => {
     logger.error({ url: config.url }, "⏱️  Timeout global alcanzado (2 minutos), cerrando scraper");
-    browser.close().catch(() => {});
+    page.close().catch(() => {});
+    browserPool.closeContext(context).catch(() => {});
   }, 120000); // 2 minutos máximo
   
   try {
-    logger.debug({ url: config.url, headless }, "Iniciando navegación a C21 Sunsets");
+    logger.debug({ url: config.url }, "Iniciando navegación a C21 Sunsets");
     
     // Usar Promise.race para tener un timeout más estricto
     const navigationPromise = page.goto(config.url, { 
@@ -502,19 +490,18 @@ export const scrapeC21Sunsets = async (
     // Limpiar timeout global
     clearTimeout(globalTimeout);
     
-    // Cerrar contexto y browser de forma segura
+    // Cerrar página y contexto (navegador se mantiene abierto en el pool)
     try {
-      await context.close().catch(() => {});
-      await browser.close().catch(() => {});
-      logger.debug("Navegador cerrado correctamente");
+      await page.close().catch(() => {});
+      await browserPool.closeContext(context);
+      logger.debug("Contexto C21 cerrado correctamente");
     } catch (closeErr) {
-      logger.warn({ err: closeErr }, "Error al cerrar navegador (ignorado)");
-      // Forzar cierre si falla el cierre normal
-      try {
-        await browser.close();
-      } catch {
-        // Ignorar errores al forzar cierre
-      }
+      logger.warn({ err: closeErr }, "Error al cerrar contexto (ignorado)");
+    }
+    
+    // Forzar garbage collection si está disponible
+    if (global.gc) {
+      global.gc();
     }
   }
   return listings;

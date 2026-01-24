@@ -2,6 +2,23 @@
 
 Scraper inmobiliario modular en Node/TS. Lee configuración desde Excel, usa Playwright para extraer propiedades, aplica filtros, deduplica y notifica por email (HTML) y WhatsApp.
 
+## 🚀 Optimizaciones de Memoria (Nuevo)
+
+**Este proyecto está optimizado para funcionar en capas gratuitas con 512MB de RAM.**
+
+Características principales:
+- ✅ **Navegador compartido**: Reutiliza una instancia de Chromium (reduce 50-70% memoria)
+- ✅ **Optimizaciones Chromium**: Flags `--single-process` y otros (reduce 30-40% memoria)
+- ✅ **Bloqueo de recursos**: Deshabilita imágenes/CSS/fuentes innecesarias (reduce 20-30% memoria)
+- ✅ **Monitoreo en tiempo real**: Alertas automáticas de memoria alta
+- ✅ **Garbage collection**: Limpieza automática entre scrapers
+
+**Resultado:** ~220-280MB de uso pico (antes: ~400-500MB)
+
+Ver más detalles en:
+- [`OPTIMIZACION_MEMORIA.md`](./OPTIMIZACION_MEMORIA.md) - Guía técnica completa
+- [`DEPLOYMENT_OPTIMIZADO.md`](./DEPLOYMENT_OPTIMIZADO.md) - Instrucciones de deployment
+
 ## Requisitos
 - Node 18+ (recomendado 20).
 - Playwright (se instala con `npm install`).
@@ -58,7 +75,8 @@ Para este caso de uso (1–2 veces al día) suele ser OK porque podés volver a 
 ## Scripts
 - `npm run dev`: servidor Fastify con reload (ts-node + nodemon).
 - `npm run build`: compila a `dist/`.
-- `npm start`: ejecuta `dist/`.
+- `npm start`: ejecuta `dist/` con optimizaciones de memoria (`--expose-gc --max-old-space-size=450`).
+- `npm run start:production`: igual que `start` pero con `NODE_ENV=production` (habilita monitor de memoria).
 - `npm run scrape:site`: corre el job manualmente leyendo el Excel.
 - `npm run ai:analyze`: analiza `storage/properties-data.json` con Groq (free tier).
 - `npm run build:previews`: regenera `web-preview.html` y `email-preview.html` desde `storage/properties-data.json` (sin scraping).
@@ -80,6 +98,7 @@ Las variables disponibles son:
   - `true` = navegador sin interfaz gráfica (más rápido, recomendado para producción)
   - `false` = navegador visible (útil para debugging y desarrollo)
 - `ALLOW_INDEXING` (opcional, default: `false`): si lo seteas en `true`, permite indexación (desactiva `X-Robots-Tag` y deja `robots.txt` sin bloqueo)
+- `ENABLE_MEMORY_MONITOR` (opcional, default: `false`): Habilita el monitor de memoria en tiempo real. Se activa automáticamente en producción (`NODE_ENV=production`).
 
 ### Variables Groq (AI) (opcional)
 - `GROQ_API_KEY` (opcional): API key de Groq Cloud. Se usa para `npm run ai:analyze` (free tier con rate limits).

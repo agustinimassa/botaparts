@@ -4,15 +4,22 @@ services:
     runtime: docker
     plan: free
     autoDeploy: true
-    dockerfilePath: Dockerfile.chromium
+    dockerfilePath: Dockerfile
     healthCheckPath: /health
+    # 🚀 OPTIMIZADO PARA RENDER FREE TIER (512MB RAM)
     envVars:
       - key: NODE_ENV
         value: production
       - key: PLAYWRIGHT_HEADLESS
         value: "true"
       - key: LOG_LEVEL
-        value: warn
+        value: info
+      # ⚠️ CRÍTICO: Habilitar monitor de memoria en producción
+      - key: ENABLE_MEMORY_MONITOR
+        value: "true"
+      # ⚠️ IMPORTANTE: NO activar single-process (causa crashes)
+      - key: CHROMIUM_SINGLE_PROCESS
+        value: "false"
       # Recomendado: proteger POST /api/scrape/run
       # - key: ADMIN_TOKEN
       #   sync: false

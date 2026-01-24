@@ -62,15 +62,23 @@ docker run --rm -p 3000:3000 --env-file .env -v "$(pwd)/storage:/app/storage" bo
 
 ## Deploy en Render (Docker)
 
+**⭐ RECOMENDADO para Render Free Tier (512MB):** Ver guía completa en [`RENDER_SETUP.md`](./RENDER_SETUP.md)
+
 Recomendado para Playwright (Chromium) porque evita problemas de instalación de browsers/deps del sistema.
 
 1) Crear un **Web Service** y elegir **Deploy an existing repo**.
 2) En Runtime/Environment, seleccionar **Docker** (Render detecta el `Dockerfile`).
-3) Configurar variables de entorno en Render (ver sección Configuración).
+3) Configurar variables de entorno en Render:
+   ```env
+   NODE_ENV=production
+   PLAYWRIGHT_HEADLESS=true
+   ENABLE_MEMORY_MONITOR=true
+   CHROMIUM_SINGLE_PROCESS=false  # ⚠️ IMPORTANTE para estabilidad
+   ```
 4) Abrir la URL del servicio y usar el HOME (`/`) para ejecutar scraping.
 
 **Persistencia en free tier:** Render Free no tiene disco persistente. Si el contenedor se reinicia, `storage/` puede perderse.
-Para este caso de uso (1–2 veces al día) suele ser OK porque podés volver a ejecutar “Actualizar propiedades”.
+Para este caso de uso (1–2 veces al día) suele ser OK porque podés volver a ejecutar "Actualizar propiedades".
 
 ## Scripts
 - `npm run dev`: servidor Fastify con reload (ts-node + nodemon).

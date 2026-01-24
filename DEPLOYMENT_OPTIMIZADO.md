@@ -181,6 +181,27 @@ https://tu-app.onrender.com/
 
 ## ⚠️ Troubleshooting
 
+### Error: "Target page, context or browser has been closed"
+
+Este error ocurre cuando el flag `--single-process` causa inestabilidad. **Solución:**
+
+1. **Desactivar single-process (RECOMENDADO):**
+
+```env
+# En variables de entorno
+CHROMIUM_SINGLE_PROCESS=false
+```
+
+**Resultado:** Más estable pero usa ~120MB más de memoria (~280-350MB total)
+
+2. **O mantenerlo activo (solo si tienes <400MB RAM):**
+
+```env
+CHROMIUM_SINGLE_PROCESS=true
+```
+
+**Nota:** Puede crashear ocasionalmente pero usa menos memoria (~220-280MB total)
+
 ### Error: "Out of memory"
 
 1. **Reducir páginas por scraper:**
@@ -188,12 +209,23 @@ https://tu-app.onrender.com/
 Editar tu Excel de configuración:
 - maxPages: 2 (en lugar de 5)
 
-2. **Verificar que el flag --single-process está activo:**
+2. **Configurar single-process (OPCIONAL):**
 
-Ver logs al inicio:
+El flag `--single-process` está **DESACTIVADO por defecto** porque puede causar inestabilidad.
+
+Ver logs al inicio para confirmar:
 ```
-✅ Navegador compartido iniciado correctamente
+✅ Navegador compartido iniciado correctamente - singleProcess: false
 ```
+
+Si necesitas ahorrar más memoria (y aceptas posibles crashes):
+```env
+CHROMIUM_SINGLE_PROCESS=true
+```
+
+**Trade-off:**
+- ✅ Sin single-process: ~280-350MB (más estable) ⭐ **RECOMENDADO**
+- ⚠️ Con single-process: ~220-280MB (puede crashear ocasionalmente)
 
 3. **Habilitar logs de memoria:**
 

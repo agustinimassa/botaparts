@@ -39,16 +39,21 @@ Resultado: SE CUELGA con 512MB
 ┌─────────────────────────────┐
 │  Navegador compartido       │ 120 MB
 ├─────────────────────────────┤
-│  Contexto activo            │  20 MB
+│  Contexto activo            │  30 MB
 ├─────────────────────────────┤
 │  Node.js runtime            │  80 MB
 ├─────────────────────────────┤
-│  TOTAL                      │ 220-280 MB ✅
+│  Overhead multi-process     │  50 MB
+├─────────────────────────────┤
+│  TOTAL                      │ 280-350 MB ✅
 └─────────────────────────────┘
-Resultado: SOBRAN ~250MB de margen
+Resultado: SOBRAN ~200MB de margen
+
+* Sin --single-process (MÁS ESTABLE)
+* Con --single-process: ~220-280MB pero PUEDE CRASHEAR
 ```
 
-**Reducción total: 50-70% de memoria**
+**Reducción total: 40-60% de memoria (modo estable)**
 
 ## 🔑 Características principales
 
@@ -61,13 +66,15 @@ Resultado: SOBRAN ~250MB de margen
 ### 2. Optimizaciones de Chromium
 ```typescript
 args: [
-  '--single-process',           // ⚠️ CRÍTICO: Reduce ~200MB
   '--disable-dev-shm-usage',    // Usa /tmp en lugar de /dev/shm
   '--disable-gpu',              // Sin GPU
   '--no-zygote',                // Sin proceso zygote
-  '--js-flags=--max-old-space-size=256', // Límite JS
   // ... 20+ flags más
 ]
+
+// --single-process DESACTIVADO por defecto (causa inestabilidad)
+// Para activar: CHROMIUM_SINGLE_PROCESS=true
+// ⚠️ Ahorra ~200MB pero puede crashear
 ```
 
 ### 3. Bloqueo de recursos pesados
@@ -146,10 +153,17 @@ curl -X POST http://localhost:3000/api/scrape/run \
 
 ## ⚠️ Consideraciones importantes
 
-### El flag --single-process
-- **Pro**: Reduce ~200MB de memoria
-- **Contra**: Puede ser menos estable en casos extremos
-- **Solución**: Si hay problemas, remover ese flag específico
+### El flag --single-process (DESACTIVADO por defecto)
+- **Pro**: Reduce ~200MB de memoria (~220-280MB total)
+- **Contra**: Puede causar crash "browser has been closed"
+- **Solución**: Está DESACTIVADO por defecto para mayor estabilidad
+- **Para activar**: `CHROMIUM_SINGLE_PROCESS=true` (solo si tienes <400MB RAM)
+
+**Configuración actual recomendada:**
+- ✅ `CHROMIUM_SINGLE_PROCESS=false` (default)
+- ✅ Uso de memoria: ~280-350MB
+- ✅ Estabilidad: Alta
+- ✅ Ideal para: 512MB RAM o más
 
 ### Bloqueo de recursos
 - Los scrapers actuales **no necesitan imágenes** para funcionar

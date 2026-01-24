@@ -49,7 +49,7 @@ class BrowserPool {
     ];
 
     // Args opcionales (solo si está habilitado)
-    const optionalArgs = [];
+    const optionalArgs: string[] = [];
     if (useSingleProcess) {
       logger.warn("⚠️ Usando --single-process (ahorra ~200MB pero puede ser inestable)");
       optionalArgs.push("--single-process");
@@ -106,8 +106,6 @@ class BrowserPool {
         },
         // Limitar viewport para reducir rendering
         viewport: { width: 1280, height: 720 },
-        // Aumentar timeout para operaciones lentas
-        timeout: 30000,
       });
 
       // Manejar cierre inesperado del contexto

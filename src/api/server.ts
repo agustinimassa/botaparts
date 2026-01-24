@@ -386,6 +386,106 @@ app.post("/jobs/run", async (request, reply) => {
   }
 });
 
+// Endpoint para enviar email de prueba
+app.post("/api/test/email", async (request, reply) => {
+  const authErr = requireAdminToken(request);
+  if (authErr) return reply.code(401).send({ error: authErr });
+
+  try {
+    // Importar dinámicamente nodemailer
+    const nodemailer = await import("nodemailer");
+    const { renderEmailCompact } = await import("../notifications/email/index.js");
+
+    // Obtener destinatarios del body o usar EMAIL_TEST_TO
+    const body = request.body as any;
+    const recipientsRaw = body?.to || process.env.EMAIL_TEST_TO;
+    
+    if (!recipientsRaw) {
+      return reply.code(400).send({ 
+        error: "Falta 'to' en el body o EMAIL_TEST_TO en variables de entorno",
+        example: { to: "email1@ejemplo.com,email2@ejemplo.com" }
+      });
+    }
+
+    const recipients = String(recipientsRaw)
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    if (!recipients.length) {
+      return reply.code(400).send({ error: "No hay destinatarios válidos" });
+    }
+
+    // Verificar configuración SMTP
+    const host = process.env.SMTP_HOST;
+    const user = process.env.SMTP_USER;
+    const pass = process.env.SMTP_PASS;
+    
+    if (!host || !user || !pass) {
+      return reply.code(400).send({ 
+        error: "Faltan variables SMTP_HOST, SMTP_USER, o SMTP_PASS",
+        configured: {
+          SMTP_HOST: !!host,
+          SMTP_USER: !!user,
+          SMTP_PASS: !!pass,
+        }
+      });
+    }
+
+    // Crear transporter
+    const transporter = nodemailer.default.createTransport({
+      host,
+      port: Number(process.env.SMTP_PORT || 587),
+      secure: false,
+      auth: { user, pass },
+    });
+
+    // Verificar conexión
+    await transporter.verify();
+
+    // Cargar datos del último scraping (si existe)
+    const dataPath = path.resolve("storage", "properties-data.json");
+    let aiSummary: string | null = null;
+    let listings: any[] = [];
+    
+    if (fs.existsSync(dataPath)) {
+      const raw = await fs.promises.readFile(dataPath, "utf-8");
+      const data = JSON.parse(raw);
+      aiSummary = data.aiSummary || null;
+      listings = data.listings || [];
+    }
+
+    // Generar HTML
+    const html = renderEmailCompact(listings.slice(0, 20), aiSummary);
+    const subject = body?.subject || `Bothouse • Test Email • ${new Date().toISOString().slice(0, 19).replace("T", " ")}`;
+
+    // Enviar email
+    const info = await transporter.sendMail({
+      from: process.env.SMTP_FROM || user,
+      to: recipients,
+      subject,
+      html,
+    });
+
+    logger.info({ messageId: info.messageId, to: recipients }, "Email de prueba enviado");
+
+    return { 
+      success: true,
+      messageId: info.messageId,
+      to: recipients,
+      listingsCount: listings.length,
+      aiSummary: !!aiSummary,
+    };
+  } catch (err: any) {
+    logger.error({ err }, "Error al enviar email de prueba");
+    return reply.code(500).send({ 
+      error: "Error al enviar email",
+      message: err?.message || String(err),
+      details: err?.code || null,
+    });
+  }
+});
+
 export const startServer = async () => {
   const port = Number(process.env.PORT || 3000);
   await app.listen({ port, host: "0.0.0.0" });
